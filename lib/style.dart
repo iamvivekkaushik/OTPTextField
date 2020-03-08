@@ -1,0 +1,4 @@
+enum FieldStyle {
+  underline,
+  box
+}
