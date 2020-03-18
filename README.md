@@ -15,7 +15,7 @@ ___
 
 </br>
 
-[![Pub](https://img.shields.io/pub/v/otp_text_field)](https://pub.dev/packages/awesome_card/versions/1.0.0)
+[![Pub](https://img.shields.io/pub/v/otp_text_field)](https://pub.dev/packages/otp_text_field)
 [![Twitter](https://img.shields.io/badge/Twitter-@vivek_kaushik_-blue.svg?style=flat)](https://twitter.com/vivek_kaushik_)
 
 ## 📱Screenshots
