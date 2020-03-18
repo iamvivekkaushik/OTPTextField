@@ -35,7 +35,7 @@ import 'package:otp_text_field/style.dart';
 
 ## 👨‍💻 Usage
 
-Use the `Awesome Card` Widget
+Use the `OTP Text Field` Widget
 
 ```dart
 OTPTextField(
