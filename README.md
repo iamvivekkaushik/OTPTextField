@@ -20,7 +20,7 @@ ___
 
 ## 📱Screenshots
 <p align="center">
-<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/screen.png" width="300" height="630"/>
+<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/screen.png" width="300"/>
 </p>
 <br>
 
@@ -29,7 +29,8 @@ ___
 Import the following package in your dart file
 
 ```dart
-import 'package:awesome_card/otp_text_field.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 ```
 
 ## 👨‍💻 Usage
