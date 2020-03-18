@@ -1,8 +1,8 @@
 name: otp_text_field
-description: A new Flutter package.
-version: 0.0.1
-author:
-homepage:
+description: A flutter package to create a OTP Text Field widget in your application.
+version: 1.0.0
+author: Vivek Kaushik <kaushikvivek.17@gmail.com>
+homepage: https://github.com/iamvivekkaushik/OTPTextField
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

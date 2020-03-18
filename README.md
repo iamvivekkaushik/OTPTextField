@@ -1,14 +1,66 @@
-# otp_text_field
+<a href="https://github.com/iamvivekkaushik/OTPTextField">
+<img align="left" src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/logo.png" width="400" height="230" /></a>
 
-A new Flutter package.
+<p><h2 align="left">OTP Text Field</h2></p>
 
-## Getting Started
+<h4>A flutter package to create a OTP Text Field widget in your application.</h4>
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+___
+
+
+<p><h6>Stay tuned for the latest updates:</h6>
+<a href="https://github.com/iamvivekkaushik" >
+<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/github.png" width="220" height="40"></a></p>
+
+</br>
+
+[![Pub](https://img.shields.io/pub/v/otp_text_field)](https://pub.dev/packages/awesome_card/versions/1.0.0)
+[![Twitter](https://img.shields.io/badge/Twitter-@vivek_kaushik_-blue.svg?style=flat)](https://twitter.com/vivek_kaushik_)
+
+## 📱Screenshots
+<p align="center">
+<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/screen.png" width="300" height="630"/>
+</p>
+<br>
+
+## ⚙️ Installation
+
+Import the following package in your dart file
+
+```dart
+import 'package:awesome_card/otp_text_field.dart';
+```
+
+## 👨‍💻 Usage
+
+Use the `Awesome Card` Widget
+
+```dart
+OTPTextField(
+  length: 5,
+  width: MediaQuery.of(context).size.width,
+  fieldWidth: 80,
+  style: TextStyle(
+    fontSize: 17
+  ),
+  textFieldAlignment: MainAxisAlignment.spaceAround,
+  fieldStyle: FieldStyle.underline,
+  onCompleted: (pin) {
+    print("Completed: " + pin);
+  },
+),
+```
+
+For more detail on usage, check out the example provided.
+
+
+## 🙍🏻‍♂️ Author
+
+* [Vivek Kaushik](http://github.com/iamvivekkaushik/)
+
+
+## 📄 License
+
+OTP Text Field is released under the MIT license.
+See [LICENSE](./LICENSE) for details.

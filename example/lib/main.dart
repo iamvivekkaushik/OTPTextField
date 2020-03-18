@@ -35,11 +35,14 @@ class _MyHomePageState extends State<MyHomePage> {
           length: 5,
           width: MediaQuery.of(context).size.width,
           textFieldAlignment: MainAxisAlignment.spaceAround,
-          fieldWidth: 50,
-          fieldStyle: FieldStyle.box,
+          fieldWidth: 80,
+          fieldStyle: FieldStyle.underline,
           style: TextStyle(
             fontSize: 17
           ),
+          onCompleted: (pin) {
+            print("Completed: " + pin);
+          },
         ),
       ),
     );

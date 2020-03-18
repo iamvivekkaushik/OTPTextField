@@ -28,6 +28,9 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when a change is detected to the pin.
   final ValueChanged<String> onChanged;
 
+  /// Callback function, called when pin is completed.
+  final ValueChanged<String> onCompleted;
+
   OTPTextField(
       {Key key,
       this.length = 4,
@@ -37,7 +40,9 @@ class OTPTextField extends StatefulWidget {
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
       this.fieldStyle = FieldStyle.underline,
-      this.onChanged}): assert(length > 1);
+      this.onChanged,
+      this.onCompleted})
+      : assert(length > 1);
 
   @override
   _OTPTextFieldState createState() => _OTPTextFieldState();
@@ -48,7 +53,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   List<TextEditingController> _textControllers;
 
   List<Widget> _textFields;
-  String _pin = "";
+  List<String> _pin;
 
   @override
   void initState() {
@@ -56,16 +61,18 @@ class _OTPTextFieldState extends State<OTPTextField> {
     _focusNodes = List<FocusNode>(widget.length);
     _textControllers = List<TextEditingController>(widget.length);
 
+    _pin = List.generate(widget.length, (int i) {
+      return '';
+    });
     _textFields = List.generate(widget.length, (int i) {
       return buildTextField(context, i);
     });
   }
 
-
   @override
   void dispose() {
-    _textControllers.forEach(
-            (TextEditingController controller) => controller.dispose());
+    _textControllers
+        .forEach((TextEditingController controller) => controller.dispose());
     super.dispose();
   }
 
@@ -86,8 +93,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   /// * Requires a build context
   /// * Requires Int position of the field
   Widget buildTextField(BuildContext context, int i) {
-    if (_focusNodes[i] == null)
-      _focusNodes[i] = new FocusNode();
+    if (_focusNodes[i] == null) _focusNodes[i] = new FocusNode();
 
     if (_textControllers[i] == null)
       _textControllers[i] = new TextEditingController();
@@ -107,17 +113,37 @@ class _OTPTextFieldState extends State<OTPTextField> {
                 ? OutlineInputBorder(borderSide: BorderSide(width: 2.0))
                 : null),
         onChanged: (String str) {
-          List list;
+          // Check if the current value at this position is empty
+          // If it is move focus to previous text field.
+          if (str.isEmpty) {
+            if (i == 0) return;
+            _focusNodes[i].unfocus();
+            _focusNodes[i-1].requestFocus();
+          }
 
-          if (_pin.isEmpty)
-            list = List(widget.length);
-          else
-            list = _pin.split('').map((String text) => Text(text)).toList();
+          // Update the current pin
+          setState(() {
+            _pin[i] = str;
+          });
 
-          list[i] = str;
+          // Remove focus
+          if(str.isNotEmpty) _focusNodes[i].unfocus();
+          // Set focus to the next field if available
+          if (i+1 != widget.length && str.isNotEmpty) FocusScope.of(context).requestFocus(_focusNodes[i+1]);
 
-          _pin = list.toString();
-          print(_pin);
+          String currentPin = "";
+          _pin.forEach((String value) {
+            currentPin += value;
+          });
+
+          // if there are no null values that means otp is completed
+          // Call the `onCompleted` callback function provided
+          if (!_pin.contains(null) && !_pin.contains('') && currentPin.length == widget.length) {
+            widget.onCompleted(currentPin);
+          }
+
+          // Call the `onChanged` callback function
+          widget.onChanged(currentPin);
         },
       ),
     );
