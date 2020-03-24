@@ -11,6 +11,9 @@ class OTPTextField extends StatefulWidget {
   /// Width of the single OTP Field
   final double fieldWidth;
 
+  /// Manage the type of keyboard that shows up
+  TextInputType keyboardType;
+
   /// The style to use for the text being edited.
   final TextStyle style;
 
@@ -36,6 +39,7 @@ class OTPTextField extends StatefulWidget {
       this.length = 4,
       this.width = 10,
       this.fieldWidth = 30,
+      this.keyboardType = TextInputType.number,
       this.style = const TextStyle(),
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
@@ -102,6 +106,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
       width: widget.fieldWidth,
       child: TextField(
         controller: _textControllers[i],
+        keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         maxLength: 1,
         style: widget.style,
@@ -118,7 +123,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (str.isEmpty) {
             if (i == 0) return;
             _focusNodes[i].unfocus();
-            _focusNodes[i-1].requestFocus();
+            _focusNodes[i - 1].requestFocus();
           }
 
           // Update the current pin
@@ -127,9 +132,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
           });
 
           // Remove focus
-          if(str.isNotEmpty) _focusNodes[i].unfocus();
+          if (str.isNotEmpty) _focusNodes[i].unfocus();
           // Set focus to the next field if available
-          if (i+1 != widget.length && str.isNotEmpty) FocusScope.of(context).requestFocus(_focusNodes[i+1]);
+          if (i + 1 != widget.length && str.isNotEmpty)
+            FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
 
           String currentPin = "";
           _pin.forEach((String value) {
@@ -138,7 +144,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
           // if there are no null values that means otp is completed
           // Call the `onCompleted` callback function provided
-          if (!_pin.contains(null) && !_pin.contains('') && currentPin.length == widget.length) {
+          if (!_pin.contains(null) &&
+              !_pin.contains('') &&
+              currentPin.length == widget.length) {
             widget.onCompleted(currentPin);
           }
 
