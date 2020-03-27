@@ -16,7 +16,7 @@ ___
 </br>
 
 [![Pub](https://img.shields.io/pub/v/otp_text_field)](https://pub.dev/packages/otp_text_field)
-[![Twitter](https://img.shields.io/badge/Twitter-@vivek_kaushik_-blue.svg?style=flat)](https://twitter.com/vivek_kaushik_)
+[![Twitter](https://img.shields.io/badge/Twitter-@iamvivekkaushik-blue.svg?style=flat)](https://twitter.com/iamvivekkaushik)
 
 ## 📱Screenshots
 <p align="center">
