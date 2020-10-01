@@ -12,7 +12,10 @@ class OTPTextField extends StatefulWidget {
   final double fieldWidth;
 
   /// Manage the type of keyboard that shows up
-  TextInputType keyboardType;
+  final TextInputType keyboardType;
+
+  /// Border/Underline color of the text field
+  final Color textFieldBoxColor;
 
   /// The style to use for the text being edited.
   final TextStyle style;
@@ -40,6 +43,7 @@ class OTPTextField extends StatefulWidget {
       this.width = 10,
       this.fieldWidth = 30,
       this.keyboardType = TextInputType.number,
+      this.textFieldBoxColor = Colors.black,
       this.style = const TextStyle(),
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
@@ -115,8 +119,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
         decoration: InputDecoration(
             counterText: "",
             border: widget.fieldStyle == FieldStyle.box
-                ? OutlineInputBorder(borderSide: BorderSide(width: 2.0))
-                : null),
+                ? OutlineInputBorder(borderSide: BorderSide(width: 2.0,
+                color: widget.textFieldBoxColor)) : null),
         onChanged: (String str) {
           // Check if the current value at this position is empty
           // If it is move focus to previous text field.
