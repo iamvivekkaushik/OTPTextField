@@ -105,6 +105,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     return Container(
       width: widget.fieldWidth,
       child: TextField(
+        autofocus: i == 0,
         controller: _textControllers[i],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
@@ -151,7 +152,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
           }
 
           // Call the `onChanged` callback function
-          widget.onChanged(currentPin);
+          if (widget.onChanged != null) {
+            widget.onChanged(currentPin);
+          }
         },
       ),
     );
