@@ -12,7 +12,7 @@ class OTPTextField extends StatefulWidget {
   final double fieldWidth;
 
   /// Manage the type of keyboard that shows up
-  TextInputType keyboardType;
+  final TextInputType keyboardType;
 
   /// The style to use for the text being edited.
   final TextStyle style;
@@ -108,7 +108,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         controller: _textControllers[i],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
-        maxLength: 1,
         style: widget.style,
         focusNode: _focusNodes[i],
         obscureText: widget.obscureText,
@@ -118,6 +117,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
                 ? OutlineInputBorder(borderSide: BorderSide(width: widget.fieldWidth))
                 : UnderlineInputBorder(borderSide: BorderSide(width: widget.fieldWidth))),
         onChanged: (String str) {
+          if (str.length > 1) {
+            _handlePaste(str);
+            return;
+          }
+
           // Check if the current value at this position is empty
           // If it is move focus to previous text field.
           if (str.isEmpty) {
@@ -137,10 +141,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (i + 1 != widget.length && str.isNotEmpty)
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
 
-          String currentPin = "";
-          _pin.forEach((String value) {
-            currentPin += value;
-          });
+          String currentPin = _getCurrentPin();
 
           // if there are no null values that means otp is completed
           // Call the `onCompleted` callback function provided
@@ -155,5 +156,40 @@ class _OTPTextFieldState extends State<OTPTextField> {
         },
       ),
     );
+  }
+
+  String _getCurrentPin() {
+    String currentPin = "";
+    _pin.forEach((String value) {
+      currentPin += value;
+    });
+    return currentPin;
+  }
+
+  void _handlePaste(String str) {
+    if (str.length > widget.length) {
+      str = str.substring(0, widget.length);
+    }
+
+    for(int i = 0; i < str.length; i++) {
+      String digit = str.substring(i, i+1);
+      _textControllers[i].text = digit;
+      _pin[i] = digit;
+    }
+
+    FocusScope.of(context).requestFocus(_focusNodes[widget.length - 1]);
+
+    String currentPin = _getCurrentPin();
+
+    // if there are no null values that means otp is completed
+    // Call the `onCompleted` callback function provided
+    if (!_pin.contains(null) &&
+        !_pin.contains('') &&
+        currentPin.length == widget.length) {
+      widget.onCompleted(currentPin);
+    }
+
+    // Call the `onChanged` callback function
+    widget.onChanged(currentPin);
   }
 }

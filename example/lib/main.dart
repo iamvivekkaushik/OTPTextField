@@ -40,6 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(
             fontSize: 17
           ),
+          onChanged: (pin) {
+            print("Changed: " + pin);
+          },
           onCompleted: (pin) {
             print("Completed: " + pin);
           },
