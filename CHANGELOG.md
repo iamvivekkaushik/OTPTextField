@@ -1,6 +1,11 @@
+## [1.1.0] - 06/03/2021
+
+* Added Null-Safety
+* Added Quick paste functionality
+
 ## [1.0.2] - 11/01/2021
 
-* Fixed issue with field style underline not working 
+* Fixed issue with field style underline not working
 
 ## [1.0.1] - 24/03/2020
 

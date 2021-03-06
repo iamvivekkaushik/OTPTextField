@@ -1,10 +1,10 @@
 name: otp_text_field
 description: A flutter package to create a OTP Text Field widget in your application.
-version: 1.0.2
+version: 1.1.0
 homepage: https://github.com/iamvivekkaushik/OTPTextField
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
