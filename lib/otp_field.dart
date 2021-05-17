@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
 class OTPTextField extends StatefulWidget {
@@ -11,11 +12,17 @@ class OTPTextField extends StatefulWidget {
   /// Width of the single OTP Field
   final double fieldWidth;
 
+  /// margin around the text fields
+  final EdgeInsetsGeometry margin;
+
   /// Manage the type of keyboard that shows up
   final TextInputType keyboardType;
 
   /// The style to use for the text being edited.
   final TextStyle style;
+
+  /// The style to use for the text being edited.
+  final double outlineBorderRadius;
 
   /// Text Field Alignment
   /// default: MainAxisAlignment.spaceBetween [MainAxisAlignment]
@@ -23,6 +30,9 @@ class OTPTextField extends StatefulWidget {
 
   /// Obscure Text if data is sensitive
   final bool obscureText;
+
+  /// Text Field Style
+  final OtpFieldStyle? otpFieldStyle;
 
   /// Text Field Style for field shape.
   /// default FieldStyle.underline [FieldStyle]
@@ -39,8 +49,11 @@ class OTPTextField extends StatefulWidget {
       this.length = 4,
       this.width = 10,
       this.fieldWidth = 30,
+      this.margin: const EdgeInsets.symmetric(horizontal: 3),
+      this.otpFieldStyle,
       this.keyboardType = TextInputType.number,
       this.style = const TextStyle(),
+      this.outlineBorderRadius: 10,
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
       this.fieldStyle = FieldStyle.underline,
@@ -53,6 +66,7 @@ class OTPTextField extends StatefulWidget {
 }
 
 class _OTPTextFieldState extends State<OTPTextField> {
+  late OtpFieldStyle _otpFieldStyle;
   late List<FocusNode?> _focusNodes;
   late List<TextEditingController?> _textControllers;
 
@@ -61,9 +75,17 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void initState() {
+    if (widget.otpFieldStyle == null) {
+      _otpFieldStyle = OtpFieldStyle();
+    } else {
+      _otpFieldStyle = widget.otpFieldStyle!;
+    }
+
     super.initState();
+
     _focusNodes = List<FocusNode?>.filled(widget.length, null, growable: false);
-    _textControllers = List<TextEditingController?>.filled(widget.length, null, growable: false);
+    _textControllers = List<TextEditingController?>.filled(widget.length, null,
+        growable: false);
 
     _pin = List.generate(widget.length, (int i) {
       return '';
@@ -104,6 +126,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     return Container(
       width: widget.fieldWidth,
+      margin: widget.margin,
+      decoration: BoxDecoration(
+          color: _otpFieldStyle.backgroundColor,
+          borderRadius: BorderRadius.circular(widget.outlineBorderRadius)),
       child: TextField(
         controller: _textControllers[i],
         keyboardType: widget.keyboardType,
@@ -113,9 +139,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
         obscureText: widget.obscureText,
         decoration: InputDecoration(
             counterText: "",
-            border: widget.fieldStyle == FieldStyle.box
-                ? OutlineInputBorder(borderSide: BorderSide(width: widget.fieldWidth))
-                : UnderlineInputBorder(borderSide: BorderSide(width: widget.fieldWidth))),
+            border: _getBorder(_otpFieldStyle.borderColor),
+            focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
+            enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
+            disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
+            errorBorder: _getBorder(_otpFieldStyle.errorBorderColor)),
         onChanged: (String str) {
           if (str.length > 1) {
             _handlePaste(str);
@@ -158,6 +186,14 @@ class _OTPTextFieldState extends State<OTPTextField> {
     );
   }
 
+  InputBorder _getBorder(Color color) {
+    return widget.fieldStyle == FieldStyle.box
+        ? OutlineInputBorder(
+            borderSide: BorderSide(color: color),
+            borderRadius: BorderRadius.circular(widget.outlineBorderRadius))
+        : UnderlineInputBorder(borderSide: BorderSide(color: color));
+  }
+
   String _getCurrentPin() {
     String currentPin = "";
     _pin.forEach((String value) {
@@ -171,8 +207,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
       str = str.substring(0, widget.length);
     }
 
-    for(int i = 0; i < str.length; i++) {
-      String digit = str.substring(i, i+1);
+    for (int i = 0; i < str.length; i++) {
+      String digit = str.substring(i, i + 1);
       _textControllers[i]!.text = digit;
       _pin[i] = digit;
     }

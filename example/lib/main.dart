@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 
 void main() => runApp(MyApp());
@@ -35,11 +36,10 @@ class _MyHomePageState extends State<MyHomePage> {
           length: 5,
           width: MediaQuery.of(context).size.width,
           textFieldAlignment: MainAxisAlignment.spaceAround,
-          fieldWidth: 50,
-          fieldStyle: FieldStyle.underline,
-          style: TextStyle(
-            fontSize: 17
-          ),
+          fieldWidth: 55,
+          fieldStyle: FieldStyle.box,
+          outlineBorderRadius: 15,
+          style: TextStyle(fontSize: 17),
           onChanged: (pin) {
             print("Changed: " + pin);
           },

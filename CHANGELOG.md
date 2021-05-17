@@ -1,3 +1,7 @@
+## [1.1.1] - 17/05/2021
+
+* Added option to set background/border color using OtpFieldStyle
+
 ## [1.1.0] - 06/03/2021
 
 * Added Null-Safety
