@@ -176,11 +176,19 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length) {
-            widget.onCompleted!(currentPin);
+            var onCompleted = widget.onCompleted;
+            if(onCompleted != null) {
+              onCompleted(currentPin);
+            }
+            // widget.onCompleted!(currentPin);
           }
 
           // Call the `onChanged` callback function
-          widget.onChanged!(currentPin);
+          var onChanged = widget.onChanged;
+          if(onChanged != null) {
+            onChanged(currentPin);
+          }
+          // widget.onChanged!(currentPin);
         },
       ),
     );
@@ -222,10 +230,18 @@ class _OTPTextFieldState extends State<OTPTextField> {
     if (!_pin.contains(null) &&
         !_pin.contains('') &&
         currentPin.length == widget.length) {
-      widget.onCompleted!(currentPin);
+      var onCompleted = widget.onCompleted;
+      if(onCompleted != null) {
+        onCompleted(currentPin);
+      }
+      // widget.onCompleted!(currentPin);
     }
 
     // Call the `onChanged` callback function
-    widget.onChanged!(currentPin);
+    var onChanged = widget.onChanged;
+    if(onChanged != null) {
+      onChanged(currentPin);
+    }
+    // widget.onChanged!(currentPin);
   }
 }
