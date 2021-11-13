@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, this.title}) : super(key: key);
-  final String? title;
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: OTPTextField(
+        /*child: OTPTextField(
           length: 5,
           width: MediaQuery.of(context).size.width,
           textFieldAlignment: MainAxisAlignment.spaceAround,
@@ -45,6 +45,25 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           onCompleted: (pin) {
             print("Completed: " + pin);
+          },
+        ),*/
+        child: OTPTextField(
+          length: 4,
+          fieldWidth: 50,
+          style: TextStyle(color: Colors.white),
+          margin: EdgeInsets.zero,
+          fieldStyle: FieldStyle.box,
+          otpFieldStyle: OtpFieldStyle(
+            backgroundColor: Colors.black,
+            borderColor: Colors.transparent,
+          ),
+          textFieldAlignment: MainAxisAlignment.spaceEvenly,
+          width: MediaQuery.of(context).size.width,
+          onChanged: (pin) {
+            print(pin);
+          },
+          onCompleted: (pin) {
+            print(pin);
           },
         ),
       ),

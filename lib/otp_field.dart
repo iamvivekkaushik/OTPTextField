@@ -131,7 +131,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
           color: _otpFieldStyle.backgroundColor,
           borderRadius: BorderRadius.circular(widget.outlineBorderRadius)),
       child: TextField(
-        maxLength: 1,
         controller: _textControllers[i],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
@@ -147,7 +146,36 @@ class _OTPTextFieldState extends State<OTPTextField> {
             errorBorder: _getBorder(_otpFieldStyle.errorBorderColor)),
         onChanged: (String str) {
           if (str.length > 1) {
-            _handlePaste(str);
+            if(str.length == widget.length){
+              print('Handling Paste');
+              _handlePaste(str);
+            }
+            else {
+              int len = str.length;
+              str = str[len-1];
+              // Update the current pin
+              setState(() {
+                _textControllers[i].text = str;
+                _pin[i] = str;
+              });
+              if (str.isNotEmpty) _focusNodes[i].unfocus();
+              // Set focus to the next field if available
+              if (i + 1 != widget.length && str.isNotEmpty)
+                FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
+
+              String currentPin = _getCurrentPin();
+
+              // if there are no null values that means otp is completed
+              // Call the `onCompleted` callback function provided
+              if (!_pin.contains(null) &&
+                  !_pin.contains('') &&
+                  currentPin.length == widget.length) {
+                widget.onCompleted(currentPin);
+              }
+
+              // Call the `onChanged` callback function
+              widget.onChanged(currentPin);
+            }
             return;
           }
 
