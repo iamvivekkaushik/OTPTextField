@@ -149,6 +149,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
             if(str.length == widget.length){
               print('Handling Paste');
               _handlePaste(str);
+              return;
             }
             else {
               int len = str.length;
@@ -156,27 +157,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
               // Update the current pin
               setState(() {
                 _textControllers[i].text = str;
-                _pin[i] = str;
               });
-              if (str.isNotEmpty) _focusNodes[i].unfocus();
-              // Set focus to the next field if available
-              if (i + 1 != widget.length && str.isNotEmpty)
-                FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
-
-              String currentPin = _getCurrentPin();
-
-              // if there are no null values that means otp is completed
-              // Call the `onCompleted` callback function provided
-              if (!_pin.contains(null) &&
-                  !_pin.contains('') &&
-                  currentPin.length == widget.length) {
-                widget.onCompleted(currentPin);
-              }
-
-              // Call the `onChanged` callback function
-              widget.onChanged(currentPin);
             }
-            return;
           }
 
           // Check if the current value at this position is empty
