@@ -32,20 +32,20 @@ class OTPTextField extends StatefulWidget {
   final bool obscureText;
 
   /// Text Field Style
-  final OtpFieldStyle otpFieldStyle;
+  final OtpFieldStyle? otpFieldStyle;
 
   /// Text Field Style for field shape.
   /// default FieldStyle.underline [FieldStyle]
   final FieldStyle fieldStyle;
 
   /// Callback function, called when a change is detected to the pin.
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onChanged;
 
   /// Callback function, called when pin is completed.
-  final ValueChanged<String> onCompleted;
+  final ValueChanged<String>? onCompleted;
 
   OTPTextField(
-      {Key key,
+      {Key? key,
       this.length = 4,
       this.width = 10,
       this.fieldWidth = 30,
@@ -66,25 +66,25 @@ class OTPTextField extends StatefulWidget {
 }
 
 class _OTPTextFieldState extends State<OTPTextField> {
-  OtpFieldStyle _otpFieldStyle;
-  List<FocusNode> _focusNodes;
-  List<TextEditingController> _textControllers;
+  late OtpFieldStyle _otpFieldStyle;
+  late List<FocusNode?> _focusNodes;
+  late List<TextEditingController?> _textControllers;
 
-  List<Widget> _textFields;
-  List<String> _pin;
+  late List<Widget> _textFields;
+  late List<String> _pin;
 
   @override
   void initState() {
     if (widget.otpFieldStyle == null) {
       _otpFieldStyle = OtpFieldStyle();
     } else {
-      _otpFieldStyle = widget.otpFieldStyle;
+      _otpFieldStyle = widget.otpFieldStyle!;
     }
 
     super.initState();
 
-    _focusNodes = List<FocusNode>.filled(widget.length, null, growable: false);
-    _textControllers = List<TextEditingController>.filled(widget.length, null,
+    _focusNodes = List<FocusNode?>.filled(widget.length, null, growable: false);
+    _textControllers = List<TextEditingController?>.filled(widget.length, null,
         growable: false);
 
     _pin = List.generate(widget.length, (int i) {
@@ -98,7 +98,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   @override
   void dispose() {
     _textControllers
-        .forEach((TextEditingController controller) => controller.dispose());
+        .forEach((TextEditingController? controller) => controller!.dispose());
     super.dispose();
   }
 
@@ -156,7 +156,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
               str = str[len-1];
               // Update the current pin
               setState(() {
-                _textControllers[i].text = str;
+                _textControllers[i]!.text = str;
               });
             }
           }
@@ -165,8 +165,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // If it is move focus to previous text field.
           if (str.isEmpty) {
             if (i == 0) return;
-            _focusNodes[i].unfocus();
-            _focusNodes[i - 1].requestFocus();
+            _focusNodes[i]!.unfocus();
+            _focusNodes[i - 1]!.requestFocus();
           }
 
           // Update the current pin
@@ -175,7 +175,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           });
 
           // Remove focus
-          if (str.isNotEmpty) _focusNodes[i].unfocus();
+          if (str.isNotEmpty) _focusNodes[i]!.unfocus();
           // Set focus to the next field if available
           if (i + 1 != widget.length && str.isNotEmpty)
             FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
@@ -187,11 +187,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length) {
-            widget.onCompleted(currentPin);
+            widget.onCompleted!(currentPin);
           }
 
           // Call the `onChanged` callback function
-          widget.onChanged(currentPin);
+          widget.onChanged!(currentPin);
         },
       ),
     );
@@ -220,7 +220,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     for (int i = 0; i < str.length; i++) {
       String digit = str.substring(i, i + 1);
-      _textControllers[i].text = digit;
+      _textControllers[i]!.text = digit;
       _pin[i] = digit;
     }
 
@@ -233,10 +233,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
     if (!_pin.contains(null) &&
         !_pin.contains('') &&
         currentPin.length == widget.length) {
-      widget.onCompleted(currentPin);
+      widget.onCompleted!(currentPin);
     }
 
     // Call the `onChanged` callback function
-    widget.onChanged(currentPin);
+    widget.onChanged!(currentPin);
   }
 }
