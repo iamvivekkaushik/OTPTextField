@@ -13,7 +13,6 @@ class OtpFieldStyle {
   /// The border color of text field when disabled.
   final Color disabledBorderColor;
 
-
   /// The border color of text field when in focus.
   final Color enabledBorderColor;
 
