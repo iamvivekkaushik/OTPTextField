@@ -183,12 +183,13 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Call the `onCompleted` callback function provided
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
-              currentPin.length == widget.length) {
+              (currentPin.length == widget.length) &&
+              widget.onCompleted != null) {
             widget.onCompleted!(currentPin);
           }
 
           // Call the `onChanged` callback function
-          widget.onChanged!(currentPin);
+          if (widget.onChanged != null) widget.onChanged!(currentPin);
         },
       ),
     );
