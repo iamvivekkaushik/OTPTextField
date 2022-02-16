@@ -184,11 +184,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length) {
-            widget.onCompleted!(currentPin);
+            widget.onCompleted?.call(currentPin);
           }
 
           // Call the `onChanged` callback function
-          widget.onChanged!(currentPin);
+          widget.onChanged?.call(currentPin);
         },
       ),
     );
@@ -230,11 +230,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
     if (!_pin.contains(null) &&
         !_pin.contains('') &&
         currentPin.length == widget.length) {
-      widget.onCompleted!(currentPin);
+      widget.onCompleted?.call(currentPin);
     }
 
     // Call the `onChanged` callback function
-    widget.onChanged!(currentPin);
+    widget.onChanged?.call(currentPin);
   }
 }
 
@@ -286,12 +286,8 @@ class OtpFieldController {
     }
 
     final widget = _otpTextFieldState.widget;
-    if (widget.onChanged != null) {
-      widget.onChanged!(newPin);
-    }
-    if (widget.onCompleted != null) {
-      widget.onCompleted!(newPin);
-    }
+    widget.onChanged?.call(newPin);
+    widget.onCompleted?.call(newPin);
   }
 
   void setValue(String value, int position) {
@@ -316,9 +312,7 @@ class OtpFieldController {
     });
 
     final widget = _otpTextFieldState.widget;
-    if (widget.onChanged != null) {
-      widget.onChanged!(newPin);
-    }
+    widget.onChanged?.call(newPin);
   }
 
   void setFocus(int position) {
