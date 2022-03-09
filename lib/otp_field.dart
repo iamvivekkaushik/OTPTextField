@@ -3,6 +3,9 @@ import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
 class OTPTextField extends StatefulWidget {
+  /// TextField Controller
+  final OtpFieldController? controller;
+
   /// Number of the OTP Fields
   final int length;
 
@@ -48,6 +51,7 @@ class OTPTextField extends StatefulWidget {
       {Key? key,
       this.length = 4,
       this.width = 10,
+      this.controller,
       this.fieldWidth = 30,
       this.margin: const EdgeInsets.symmetric(horizontal: 3),
       this.otpFieldStyle,
@@ -75,6 +79,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void initState() {
+    if (widget.controller != null) {
+      widget.controller!.setOtpTextFieldState(this);
+    }
+
     if (widget.otpFieldStyle == null) {
       _otpFieldStyle = OtpFieldStyle();
     } else {
@@ -238,5 +246,104 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     // Call the `onChanged` callback function
     widget.onChanged!(currentPin);
+  }
+}
+
+class OtpFieldController {
+  late _OTPTextFieldState _otpTextFieldState;
+
+  void setOtpTextFieldState(_OTPTextFieldState state) {
+    _otpTextFieldState = state;
+  }
+
+  void clear() {
+    final textFieldLength = _otpTextFieldState.widget.length;
+    _otpTextFieldState._pin = List.generate(textFieldLength, (int i) {
+      return '';
+    });
+
+    final textControllers = _otpTextFieldState._textControllers;
+    textControllers.forEach((textController) {
+      if (textController != null) {
+        textController.text = '';
+      }
+    });
+
+    final firstFocusNode = _otpTextFieldState._focusNodes[0];
+    if (firstFocusNode != null) {
+      firstFocusNode.requestFocus();
+    }
+  }
+
+  void set(List<String> pin) {
+    final textFieldLength = _otpTextFieldState.widget.length;
+    if (pin.length < textFieldLength) {
+      throw new Exception(
+          "Pin length must be same as field length. Expected: $textFieldLength, Found ${pin.length}");
+    }
+
+    _otpTextFieldState._pin = pin;
+    String newPin = '';
+
+    final textControllers = _otpTextFieldState._textControllers;
+    for (int i = 0; i < textControllers.length; i++) {
+      final textController = textControllers[i];
+      final pinValue = pin[i];
+      newPin += pinValue;
+
+      if (textController != null) {
+        textController.text = pinValue;
+      }
+    }
+
+    final widget = _otpTextFieldState.widget;
+    if (widget.onChanged != null) {
+      widget.onChanged!(newPin);
+    }
+    if (widget.onCompleted != null) {
+      widget.onCompleted!(newPin);
+    }
+  }
+
+  void setValue(String value, int position) {
+    final maxIndex = _otpTextFieldState.widget.length - 1;
+    if (position > maxIndex) {
+      throw new Exception(
+          "Provided position is out of bounds for the OtpTextField");
+    }
+
+    final textControllers = _otpTextFieldState._textControllers;
+    final textController = textControllers[position];
+    final currentPin = _otpTextFieldState._pin;
+
+    if (textController != null) {
+      textController.text = value;
+      currentPin[position] = value;
+    }
+
+    String newPin = "";
+    currentPin.forEach((item) {
+      newPin += item;
+    });
+
+    final widget = _otpTextFieldState.widget;
+    if (widget.onChanged != null) {
+      widget.onChanged!(newPin);
+    }
+  }
+
+  void setFocus(int position) {
+    final maxIndex = _otpTextFieldState.widget.length - 1;
+    if (position > maxIndex) {
+      throw new Exception(
+          "Provided position is out of bounds for the OtpTextField");
+    }
+
+    final focusNodes = _otpTextFieldState._focusNodes;
+    final focusNode = focusNodes[position];
+
+    if (focusNode != null) {
+      focusNode.requestFocus();
+    }
   }
 }

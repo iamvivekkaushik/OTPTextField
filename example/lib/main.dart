@@ -28,44 +28,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  OtpFieldController otpController = OtpFieldController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.cleaning_services),
+        onPressed: () {
+          print("Floating button was pressed.");
+          otpController.set(['2', '3', '5', '5', '7']);
+          //otpController.clear();
+          // otpController.set(['2', '3', '5', '5', '7']);
+          // otpController.setValue('3', 0);
+          // otpController.setFocus(1);
+        },
+      ),
       body: Center(
-        /*child: OTPTextField(
-          length: 5,
-          width: MediaQuery.of(context).size.width,
-          textFieldAlignment: MainAxisAlignment.spaceAround,
-          fieldWidth: 55,
-          fieldStyle: FieldStyle.box,
-          outlineBorderRadius: 15,
-          style: TextStyle(fontSize: 17),
-          onChanged: (pin) {
-            print("Changed: " + pin);
-          },
-          onCompleted: (pin) {
-            print("Completed: " + pin);
-          },
-        ),*/
         child: OTPTextField(
-          length: 4,
-          fieldWidth: 50,
-          style: TextStyle(color: Colors.white),
-          margin: EdgeInsets.zero,
-          fieldStyle: FieldStyle.box,
-          otpFieldStyle: OtpFieldStyle(
-            backgroundColor: Colors.black,
-            borderColor: Colors.transparent,
-          ),
-          textFieldAlignment: MainAxisAlignment.spaceEvenly,
-          width: MediaQuery.of(context).size.width,
-          onChanged: (pin) {
-            print(pin);
-          },
-          onCompleted: (pin) {
-            print(pin);
-          },
-        ),
+            controller: otpController,
+            length: 5,
+            width: MediaQuery.of(context).size.width,
+            textFieldAlignment: MainAxisAlignment.spaceAround,
+            fieldWidth: 55,
+            fieldStyle: FieldStyle.box,
+            outlineBorderRadius: 15,
+            style: TextStyle(fontSize: 17),
+            onChanged: (pin) {
+              print("Changed: " + pin);
+            },
+            onCompleted: (pin) {
+              print("Completed: " + pin);
+              otpController.setFocus(4);
+            }),
       ),
     );
   }

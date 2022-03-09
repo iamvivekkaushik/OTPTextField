@@ -1,3 +1,7 @@
+### [1.1.2] - 28/01/2021
+
+* Added OtpTextField Controller
+
 ## [1.1.1] - 17/05/2021
 
 * Added option to set background/border color using OtpFieldStyle
