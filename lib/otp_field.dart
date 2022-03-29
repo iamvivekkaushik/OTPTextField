@@ -26,6 +26,10 @@ class OTPTextField extends StatefulWidget {
 
   /// The style to use for the text being edited.
   final double outlineBorderRadius;
+  
+  
+  /// The cursorColor of the text field (Default is set to Blue).
+  final Color cursorColor;
 
   /// Text Field Alignment
   /// default: MainAxisAlignment.spaceBetween [MainAxisAlignment]
@@ -58,6 +62,7 @@ class OTPTextField extends StatefulWidget {
       this.keyboardType = TextInputType.number,
       this.style = const TextStyle(),
       this.outlineBorderRadius: 10,
+      this.cursorColor = Colors.blue,
       this.textFieldAlignment = MainAxisAlignment.spaceBetween,
       this.obscureText = false,
       this.fieldStyle = FieldStyle.underline,
@@ -139,6 +144,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           color: _otpFieldStyle.backgroundColor,
           borderRadius: BorderRadius.circular(widget.outlineBorderRadius)),
       child: TextField(
+        cursorColor: widget.cursorColor,
         controller: _textControllers[i],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
