@@ -163,7 +163,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
         maxLength: 1,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
-        validator: widget.hasError ? (value) => "" : null,
+        validator: (value) {
+          return widget.hasError ? "" : null;
+        },
         decoration: InputDecoration(
           isDense: widget.isDense,
           counterText: "",
