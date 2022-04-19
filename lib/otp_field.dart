@@ -115,8 +115,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void dispose() {
-    _textControllers
-        .forEach((TextEditingController? controller) => controller!.dispose());
+    _textControllers.forEach((controller) => controller?.dispose());
     super.dispose();
   }
 
@@ -146,12 +145,24 @@ class _OTPTextFieldState extends State<OTPTextField> {
     }
     final isLast = index == widget.length - 1;
 
+    InputBorder getBorder(Color color) {
+      final colorOrError =
+          widget.hasError ? _otpFieldStyle.errorBorderColor : color;
+
+      return widget.fieldStyle == FieldStyle.box
+          ? OutlineInputBorder(
+              borderSide: BorderSide(color: colorOrError),
+              borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
+            )
+          : UnderlineInputBorder(borderSide: BorderSide(color: colorOrError));
+    }
+
     return Container(
       width: widget.fieldWidth,
       margin: EdgeInsets.only(
         right: isLast ? 0 : widget.spaceBetween,
       ),
-      child: TextFormField(
+      child: TextField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
@@ -159,20 +170,17 @@ class _OTPTextFieldState extends State<OTPTextField> {
         maxLength: 1,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
-        validator: (value) {
-          return widget.hasError ? "" : null;
-        },
         decoration: InputDecoration(
           isDense: widget.isDense,
           fillColor: _otpFieldStyle.backgroundColor,
           counterText: "",
           contentPadding: widget.contentPadding,
-          border: _getBorder(_otpFieldStyle.borderColor),
-          focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
-          enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
-          disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
-          errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
-          focusedErrorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+          border: getBorder(_otpFieldStyle.borderColor),
+          focusedBorder: getBorder(_otpFieldStyle.focusBorderColor),
+          enabledBorder: getBorder(_otpFieldStyle.enabledBorderColor),
+          disabledBorder: getBorder(_otpFieldStyle.disabledBorderColor),
+          errorBorder: getBorder(_otpFieldStyle.errorBorderColor),
+          focusedErrorBorder: getBorder(_otpFieldStyle.errorBorderColor),
           // to hide the error text
           errorStyle: TextStyle(height: 0, fontSize: 0),
         ),
@@ -216,15 +224,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         },
       ),
     );
-  }
-
-  InputBorder _getBorder(Color color) {
-    return widget.fieldStyle == FieldStyle.box
-        ? OutlineInputBorder(
-            borderSide: BorderSide(color: color),
-            borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
-          )
-        : UnderlineInputBorder(borderSide: BorderSide(color: color));
   }
 
   String _getCurrentPin() {
