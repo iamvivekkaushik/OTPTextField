@@ -56,7 +56,7 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when pin is completed.
   final ValueChanged<String>? onCompleted;
 
-  OTPTextField({
+  const OTPTextField({
     Key? key,
     this.length = 4,
     this.width = 10,
@@ -121,7 +121,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       child: Row(
         mainAxisAlignment: widget.textFieldAlignment,
@@ -172,6 +172,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         obscureText: widget.obscureText,
         decoration: InputDecoration(
           isDense: widget.isDense,
+          filled: true,
           fillColor: _otpFieldStyle.backgroundColor,
           counterText: "",
           contentPadding: widget.contentPadding,
@@ -183,7 +184,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           focusedErrorBorder: getBorder(_otpFieldStyle.errorBorderColor),
           errorText: null,
           // to hide the error text
-          errorStyle: TextStyle(height: 0, fontSize: 0),
+          errorStyle: const TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
           if (str.length > 1) {
@@ -207,8 +208,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Remove focus
           if (str.isNotEmpty) _focusNodes[index]!.unfocus();
           // Set focus to the next field if available
-          if (index + 1 != widget.length && str.isNotEmpty)
+          if (index + 1 != widget.length && str.isNotEmpty) {
             FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+          }
 
           String currentPin = _getCurrentPin();
 
@@ -292,7 +294,7 @@ class OtpFieldController {
   void set(List<String> pin) {
     final textFieldLength = _otpTextFieldState.widget.length;
     if (pin.length < textFieldLength) {
-      throw new Exception(
+      throw Exception(
           "Pin length must be same as field length. Expected: $textFieldLength, Found ${pin.length}");
     }
 
@@ -320,7 +322,7 @@ class OtpFieldController {
   void setValue(String value, int position) {
     final maxIndex = _otpTextFieldState.widget.length - 1;
     if (position > maxIndex) {
-      throw new Exception(
+      throw Exception(
           "Provided position is out of bounds for the OtpTextField");
     }
 
@@ -347,7 +349,7 @@ class OtpFieldController {
   void setFocus(int position) {
     final maxIndex = _otpTextFieldState.widget.length - 1;
     if (position > maxIndex) {
-      throw new Exception(
+      throw Exception(
           "Provided position is out of bounds for the OtpTextField");
     }
 
