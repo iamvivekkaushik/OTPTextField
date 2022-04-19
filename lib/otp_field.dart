@@ -211,7 +211,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
     return widget.fieldStyle == FieldStyle.box
         ? OutlineInputBorder(
             borderSide: BorderSide(color: color),
-            borderRadius: BorderRadius.circular(widget.outlineBorderRadius))
+            borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
+          )
         : UnderlineInputBorder(borderSide: BorderSide(color: color));
   }
 
