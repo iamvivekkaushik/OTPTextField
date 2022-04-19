@@ -181,6 +181,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           disabledBorder: getBorder(_otpFieldStyle.disabledBorderColor),
           errorBorder: getBorder(_otpFieldStyle.errorBorderColor),
           focusedErrorBorder: getBorder(_otpFieldStyle.errorBorderColor),
+          errorText: null,
           // to hide the error text
           errorStyle: TextStyle(height: 0, fontSize: 0),
         ),
