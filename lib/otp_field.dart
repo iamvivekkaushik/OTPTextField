@@ -21,6 +21,9 @@ class OTPTextField extends StatefulWidget {
   /// Manage the type of keyboard that shows up
   final TextInputType keyboardType;
 
+  /// show the error border or not
+  final bool hasError;
+
   /// The style to use for the text being edited.
   final TextStyle style;
 
@@ -59,6 +62,7 @@ class OTPTextField extends StatefulWidget {
     this.fieldWidth = 30,
     this.spaceBetween = 0,
     this.otpFieldStyle,
+    this.hasError = false,
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
     this.outlineBorderRadius: 10,
@@ -154,8 +158,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         style: widget.style,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
-        //TODO
-        validator: (value) => "Test",
+        validator: widget.hasError ? (value) => "" : null,
         decoration: InputDecoration(
           isDense: widget.isDense,
           counterText: "",
