@@ -34,6 +34,10 @@ class OTPTextField extends StatefulWidget {
   /// Obscure Text if data is sensitive
   final bool obscureText;
 
+  /// Whether the [InputDecorator.child] is part of a dense form (i.e., uses less vertical
+  /// space).
+  final bool isDense;
+
   /// Text Field Style
   final OtpFieldStyle? otpFieldStyle;
 
@@ -47,23 +51,25 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when pin is completed.
   final ValueChanged<String>? onCompleted;
 
-  OTPTextField(
-      {Key? key,
-      this.length = 4,
-      this.width = 10,
-      this.controller,
-      this.fieldWidth = 30,
-      this.margin: const EdgeInsets.symmetric(horizontal: 3),
-      this.otpFieldStyle,
-      this.keyboardType = TextInputType.number,
-      this.style = const TextStyle(),
-      this.outlineBorderRadius: 10,
-      this.textFieldAlignment = MainAxisAlignment.spaceBetween,
-      this.obscureText = false,
-      this.fieldStyle = FieldStyle.underline,
-      this.onChanged,
-      this.onCompleted})
-      : assert(length > 1);
+  OTPTextField({
+    Key? key,
+    this.length = 4,
+    this.width = 10,
+    this.controller,
+    this.fieldWidth = 30,
+    this.margin: const EdgeInsets.symmetric(horizontal: 3),
+    this.otpFieldStyle,
+    this.keyboardType = TextInputType.number,
+    this.style = const TextStyle(),
+    this.outlineBorderRadius: 10,
+    this.textFieldAlignment = MainAxisAlignment.spaceBetween,
+    this.obscureText = false,
+    this.fieldStyle = FieldStyle.underline,
+    this.onChanged,
+    this.isDense = false,
+    this.onCompleted,
+  })  : assert(length > 1),
+        super(key: key);
 
   @override
   _OTPTextFieldState createState() => _OTPTextFieldState();
@@ -74,7 +80,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
   late List<FocusNode?> _focusNodes;
   late List<TextEditingController?> _textControllers;
 
-  late List<Widget> _textFields;
   late List<String> _pin;
 
   @override
@@ -98,9 +103,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
     _pin = List.generate(widget.length, (int i) {
       return '';
     });
-    _textFields = List.generate(widget.length, (int i) {
-      return buildTextField(context, i);
-    });
   }
 
   @override
@@ -117,7 +119,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
       child: Row(
         mainAxisAlignment: widget.textFieldAlignment,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: _textFields,
+        children: List.generate(widget.length, (int i) {
+          return buildTextField(context, i);
+        }),
       ),
     );
   }
@@ -146,6 +150,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         focusNode: _focusNodes[i],
         obscureText: widget.obscureText,
         decoration: InputDecoration(
+            isDense: widget.isDense,
             counterText: "",
             border: _getBorder(_otpFieldStyle.borderColor),
             focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
