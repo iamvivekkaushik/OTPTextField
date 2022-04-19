@@ -163,6 +163,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         decoration: InputDecoration(
           isDense: widget.isDense,
           counterText: "",
+          contentPadding: EdgeInsets.all(2),
           border: _getBorder(_otpFieldStyle.borderColor),
           focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
           enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
