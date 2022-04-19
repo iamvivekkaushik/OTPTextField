@@ -18,6 +18,8 @@ class OTPTextField extends StatefulWidget {
   /// space between the text fields
   final double spaceBetween;
 
+  final EdgeInsets contentPadding;
+
   /// Manage the type of keyboard that shows up
   final TextInputType keyboardType;
 
@@ -70,6 +72,8 @@ class OTPTextField extends StatefulWidget {
     this.obscureText = false,
     this.fieldStyle = FieldStyle.underline,
     this.onChanged,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
     this.isDense = false,
     this.onCompleted,
   })  : assert(length > 1),
@@ -163,7 +167,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         decoration: InputDecoration(
           isDense: widget.isDense,
           counterText: "",
-          contentPadding: EdgeInsets.all(2),
+          contentPadding: widget.contentPadding,
           border: _getBorder(_otpFieldStyle.borderColor),
           focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
           enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
