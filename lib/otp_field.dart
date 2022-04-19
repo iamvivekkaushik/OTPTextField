@@ -92,6 +92,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.controller != null) {
       widget.controller!.setOtpTextFieldState(this);
     }
@@ -101,8 +103,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
     } else {
       _otpFieldStyle = widget.otpFieldStyle!;
     }
-
-    super.initState();
 
     _focusNodes = List<FocusNode?>.filled(widget.length, null, growable: false);
     _textControllers = List<TextEditingController?>.filled(widget.length, null,
