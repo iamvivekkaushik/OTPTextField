@@ -151,9 +151,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
       margin: EdgeInsets.only(
         right: isLast ? 0 : widget.spaceBetween,
       ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
-      ),
       child: TextFormField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
