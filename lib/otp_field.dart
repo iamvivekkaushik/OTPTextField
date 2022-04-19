@@ -156,6 +156,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         style: widget.style,
+        maxLength: 1,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
         validator: widget.hasError ? (value) => "" : null,
