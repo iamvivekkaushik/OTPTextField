@@ -217,7 +217,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length) {
-            widget.onCompleted!(currentPin);
+            widget.onCompleted?.call(currentPin);
           }
 
           // Call the `onChanged` callback function
@@ -255,7 +255,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     if (!_pin.contains(null) &&
         !_pin.contains('') &&
         currentPin.length == widget.length) {
-      widget.onCompleted!(currentPin);
+      widget.onCompleted?.call(currentPin);
     }
 
     // Call the `onChanged` callback function
@@ -311,12 +311,10 @@ class OtpFieldController {
     }
 
     final widget = _otpTextFieldState.widget;
-    if (widget.onChanged != null) {
-      widget.onChanged!(newPin);
-    }
-    if (widget.onCompleted != null) {
-      widget.onCompleted!(newPin);
-    }
+
+    widget.onChanged?.call(newPin);
+
+    widget.onCompleted?.call(newPin);
   }
 
   void setValue(String value, int position) {
