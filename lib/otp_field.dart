@@ -131,10 +131,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
   /// * Requires a build context
   /// * Requires Int position of the field
   Widget buildTextField(BuildContext context, int index) {
-    if (_focusNodes[index] == null) _focusNodes[index] = new FocusNode();
+    if (_focusNodes[index] == null) _focusNodes[index] = FocusNode();
 
     if (_textControllers[index] == null) {
-      _textControllers[index] = new TextEditingController();
+      _textControllers[index] = TextEditingController();
     }
     final isLast = index == widget.length - 1;
 
@@ -144,23 +144,27 @@ class _OTPTextFieldState extends State<OTPTextField> {
         right: isLast ? 0 : widget.spaceBetween,
       ),
       decoration: BoxDecoration(
-          color: _otpFieldStyle.backgroundColor,
-          borderRadius: BorderRadius.circular(widget.outlineBorderRadius)),
-      child: TextField(
+        color: _otpFieldStyle.backgroundColor,
+        borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
+      ),
+      child: TextFormField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         style: widget.style,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
+        //TODO 
+        validator: (value) => "",
         decoration: InputDecoration(
-            isDense: widget.isDense,
-            counterText: "",
-            border: _getBorder(_otpFieldStyle.borderColor),
-            focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
-            enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
-            disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
-            errorBorder: _getBorder(_otpFieldStyle.errorBorderColor)),
+          isDense: widget.isDense,
+          counterText: "",
+          border: _getBorder(_otpFieldStyle.borderColor),
+          focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
+          enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
+          disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
+          errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+        ),
         onChanged: (String str) {
           if (str.length > 1) {
             _handlePaste(str);
