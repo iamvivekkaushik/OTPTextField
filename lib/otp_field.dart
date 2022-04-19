@@ -152,7 +152,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         right: isLast ? 0 : widget.spaceBetween,
       ),
       decoration: BoxDecoration(
-        color: _otpFieldStyle.backgroundColor,
         borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
       ),
       child: TextFormField(
@@ -168,6 +167,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         },
         decoration: InputDecoration(
           isDense: widget.isDense,
+          fillColor: _otpFieldStyle.backgroundColor,
           counterText: "",
           contentPadding: widget.contentPadding,
           border: _getBorder(_otpFieldStyle.borderColor),
@@ -177,7 +177,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
           focusedErrorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
           // to hide the error text
-          errorStyle: TextStyle(height: 0),
+          errorStyle: TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
           if (str.length > 1) {
