@@ -154,8 +154,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
         style: widget.style,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
-        //TODO 
-        validator: (value) => "",
+        //TODO
+        validator: (value) => "Test",
         decoration: InputDecoration(
           isDense: widget.isDense,
           counterText: "",
