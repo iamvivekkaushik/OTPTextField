@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
@@ -56,6 +57,8 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when pin is completed.
   final ValueChanged<String>? onCompleted;
 
+  final List<TextInputFormatter>? inputFormatter;
+
   const OTPTextField({
     Key? key,
     this.length = 4,
@@ -72,6 +75,7 @@ class OTPTextField extends StatefulWidget {
     this.obscureText = false,
     this.fieldStyle = FieldStyle.underline,
     this.onChanged,
+    this.inputFormatter,
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
     this.isDense = false,
@@ -167,6 +171,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         keyboardType: widget.keyboardType,
         textAlign: TextAlign.center,
         style: widget.style,
+        inputFormatters: widget.inputFormatter,
         maxLength: 1,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
