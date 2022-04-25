@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
             length: 5,
             width: MediaQuery.of(context).size.width,
             textFieldAlignment: MainAxisAlignment.spaceAround,
-            fieldWidth: 55,
+            fieldWidth: 45,
             fieldStyle: FieldStyle.box,
             outlineBorderRadius: 15,
             style: TextStyle(fontSize: 17),
