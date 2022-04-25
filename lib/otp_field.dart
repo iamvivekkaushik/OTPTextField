@@ -16,9 +16,15 @@ class OTPTextField extends StatefulWidget {
   /// Width of the single OTP Field
   final double fieldWidth;
 
+  /// margin around the text fields
+  @Deprecated(
+      "Since there is an issue with the margin because it's around each item, we use [spaceBetween] from now on.")
+  final EdgeInsetsGeometry? margin;
+
   /// space between the text fields
   final double spaceBetween;
 
+  /// content padding of the text fields
   final EdgeInsets contentPadding;
 
   /// Manage the type of keyboard that shows up
@@ -68,6 +74,7 @@ class OTPTextField extends StatefulWidget {
     this.spaceBetween = 0,
     this.otpFieldStyle,
     this.hasError = false,
+    this.margin,
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
     this.outlineBorderRadius: 10,
@@ -149,7 +156,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     }
     final isLast = index == widget.length - 1;
 
-    InputBorder getBorder(Color color) {
+    InputBorder _getBorder(Color color) {
       final colorOrError =
           widget.hasError ? _otpFieldStyle.errorBorderColor : color;
 
@@ -163,9 +170,10 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     return Container(
       width: widget.fieldWidth,
-      margin: EdgeInsets.only(
-        right: isLast ? 0 : widget.spaceBetween,
-      ),
+      margin: widget.margin ??
+          EdgeInsets.only(
+            right: isLast ? 0 : widget.spaceBetween,
+          ),
       child: TextField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
@@ -181,12 +189,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
           fillColor: _otpFieldStyle.backgroundColor,
           counterText: "",
           contentPadding: widget.contentPadding,
-          border: getBorder(_otpFieldStyle.borderColor),
-          focusedBorder: getBorder(_otpFieldStyle.focusBorderColor),
-          enabledBorder: getBorder(_otpFieldStyle.enabledBorderColor),
-          disabledBorder: getBorder(_otpFieldStyle.disabledBorderColor),
-          errorBorder: getBorder(_otpFieldStyle.errorBorderColor),
-          focusedErrorBorder: getBorder(_otpFieldStyle.errorBorderColor),
+          border: _getBorder(_otpFieldStyle.borderColor),
+          focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
+          enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
+          disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
+          errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+          focusedErrorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
           errorText: null,
           // to hide the error text
           errorStyle: const TextStyle(height: 0, fontSize: 0),
