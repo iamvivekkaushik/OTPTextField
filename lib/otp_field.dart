@@ -178,15 +178,21 @@ class _OTPTextFieldState extends State<OTPTextField> {
             right: isLast ? 0 : widget.spaceBetween,
           ),
       child: TextField(
+        onTap: () {
+          _textControllers[index]!.selection = TextSelection.fromPosition(
+              TextPosition(offset: _textControllers[index]!.text.length));
+        },
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization,
         textAlign: TextAlign.center,
         style: widget.style,
         inputFormatters: widget.inputFormatter,
-        maxLength: 1,
+        //maxLength: 1,
+        maxLength: 2,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
+        showCursor: false,
         decoration: InputDecoration(
           isDense: widget.isDense,
           filled: true,
@@ -205,8 +211,25 @@ class _OTPTextFieldState extends State<OTPTextField> {
         ),
         onChanged: (String str) {
           if (str.length > 1) {
-            _handlePaste(str);
-            return;
+            if (str.length == widget.length && index == widget.length - 1) {
+              print('Handling Paste');
+              _handlePaste(str);
+              return;
+            } else {
+              // User modified same position
+              if (_pin.length >= index + 1) {
+                // remove previously entered digit
+                str = str.replaceFirst(_pin[index], '');
+              } else {
+                // Take the last entered digit as otp entry
+                int len = str.length;
+                str = str[len - 1];
+              }
+              // Update the current pin
+              setState(() {
+                _textControllers[index]!.text = str;
+              });
+            }
           }
 
           // Check if the current value at this position is empty
@@ -235,7 +258,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Call the `onCompleted` callback function provided
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
-              currentPin.length == widget.length) {
+              currentPin.length == widget.length &&
+              index + 1 == widget.length) { // Only call this when user is on last digit
             widget.onCompleted?.call(currentPin);
           }
 

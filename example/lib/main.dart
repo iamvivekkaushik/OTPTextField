@@ -38,9 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           print("Floating button was pressed.");
           otpController.clear();
-          // otpController.set(['2', '3', '5', '5', '7']);
-          // otpController.setValue('3', 0);
-          // otpController.setFocus(1);
         },
       ),
       body: Center(
