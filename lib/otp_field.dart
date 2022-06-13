@@ -178,15 +178,21 @@ class _OTPTextFieldState extends State<OTPTextField> {
             right: isLast ? 0 : widget.spaceBetween,
           ),
       child: TextField(
+        onTap: () {
+          _textControllers[index]!.selection = TextSelection.fromPosition(
+              TextPosition(offset: _textControllers[index]!.text.length));
+        },
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization,
         textAlign: TextAlign.center,
         style: widget.style,
         inputFormatters: widget.inputFormatter,
-        maxLength: 1,
+        //maxLength: 1,
+        maxLength: 2,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
+        showCursor: false,
         decoration: InputDecoration(
           isDense: widget.isDense,
           filled: true,
@@ -204,18 +210,22 @@ class _OTPTextFieldState extends State<OTPTextField> {
           errorStyle: const TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
+          debugPrint('Changed');
           if (str.length > 1) {
-            if(str.length == widget.length){
+            if (str.length == widget.length && index == widget.length - 1) {
               print('Handling Paste');
               _handlePaste(str);
               return;
-            }
-            else {
-              int len = str.length;
-              str = str[len-1];
+            } else {
+              if (_pin.length >= index + 1) {
+                str = str.replaceFirst(_pin[index], '');
+              } else {
+                int len = str.length;
+                str = str[len - 1];
+              }
               // Update the current pin
               setState(() {
-                _textControllers[i]!.text = str;
+                _textControllers[index]!.text = str;
               });
             }
           }
@@ -246,7 +256,8 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Call the `onCompleted` callback function provided
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
-              currentPin.length == widget.length) {
+              currentPin.length == widget.length &&
+              index + 1 == widget.length) {
             widget.onCompleted?.call(currentPin);
           }
 
