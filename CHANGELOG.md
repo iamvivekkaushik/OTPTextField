@@ -1,3 +1,8 @@
+### [1.1.3] - 25/04/2022
+
+* added background color on text field
+* added input formatter
+
 ### [1.1.2] - 28/01/2021
 
 * Added OtpTextField Controller

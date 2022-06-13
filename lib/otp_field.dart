@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
@@ -16,10 +17,23 @@ class OTPTextField extends StatefulWidget {
   final double fieldWidth;
 
   /// margin around the text fields
-  final EdgeInsetsGeometry margin;
+  @Deprecated(
+      "Since there is an issue with the margin because it's around each item, we use [spaceBetween] from now on.")
+  final EdgeInsetsGeometry? margin;
+
+  /// space between the text fields
+  final double spaceBetween;
+
+  /// content padding of the text fields
+  final EdgeInsets contentPadding;
 
   /// Manage the type of keyboard that shows up
   final TextInputType keyboardType;
+
+  /// show the error border or not
+  final bool hasError;
+
+  final TextCapitalization textCapitalization;
 
   /// The style to use for the text being edited.
   final TextStyle style;
@@ -34,6 +48,10 @@ class OTPTextField extends StatefulWidget {
   /// Obscure Text if data is sensitive
   final bool obscureText;
 
+  /// Whether the [InputDecorator.child] is part of a dense form (i.e., uses less vertical
+  /// space).
+  final bool isDense;
+
   /// Text Field Style
   final OtpFieldStyle? otpFieldStyle;
 
@@ -47,23 +65,33 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when pin is completed.
   final ValueChanged<String>? onCompleted;
 
-  OTPTextField(
-      {Key? key,
-      this.length = 4,
-      this.width = 10,
-      this.controller,
-      this.fieldWidth = 30,
-      this.margin: const EdgeInsets.symmetric(horizontal: 3),
-      this.otpFieldStyle,
-      this.keyboardType = TextInputType.number,
-      this.style = const TextStyle(),
-      this.outlineBorderRadius: 10,
-      this.textFieldAlignment = MainAxisAlignment.spaceBetween,
-      this.obscureText = false,
-      this.fieldStyle = FieldStyle.underline,
-      this.onChanged,
-      this.onCompleted})
-      : assert(length > 1);
+  final List<TextInputFormatter>? inputFormatter;
+
+  const OTPTextField({
+    Key? key,
+    this.length = 4,
+    this.width = 10,
+    this.controller,
+    this.fieldWidth = 30,
+    this.spaceBetween = 0,
+    this.otpFieldStyle,
+    this.hasError = false,
+    this.margin,
+    this.keyboardType = TextInputType.number,
+    this.style = const TextStyle(),
+    this.outlineBorderRadius: 10,
+    this.textCapitalization = TextCapitalization.none,
+    this.textFieldAlignment = MainAxisAlignment.spaceBetween,
+    this.obscureText = false,
+    this.fieldStyle = FieldStyle.underline,
+    this.onChanged,
+    this.inputFormatter,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+    this.isDense = false,
+    this.onCompleted,
+  })  : assert(length > 1),
+        super(key: key);
 
   @override
   _OTPTextFieldState createState() => _OTPTextFieldState();
@@ -74,11 +102,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
   late List<FocusNode?> _focusNodes;
   late List<TextEditingController?> _textControllers;
 
-  late List<Widget> _textFields;
   late List<String> _pin;
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.controller != null) {
       widget.controller!.setOtpTextFieldState(this);
     }
@@ -89,8 +118,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
       _otpFieldStyle = widget.otpFieldStyle!;
     }
 
-    super.initState();
-
     _focusNodes = List<FocusNode?>.filled(widget.length, null, growable: false);
     _textControllers = List<TextEditingController?>.filled(widget.length, null,
         growable: false);
@@ -98,26 +125,24 @@ class _OTPTextFieldState extends State<OTPTextField> {
     _pin = List.generate(widget.length, (int i) {
       return '';
     });
-    _textFields = List.generate(widget.length, (int i) {
-      return buildTextField(context, i);
-    });
   }
 
   @override
   void dispose() {
-    _textControllers
-        .forEach((TextEditingController? controller) => controller!.dispose());
+    _textControllers.forEach((controller) => controller?.dispose());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       child: Row(
         mainAxisAlignment: widget.textFieldAlignment,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: _textFields,
+        children: List.generate(widget.length, (index) {
+          return buildTextField(context, index);
+        }),
       ),
     );
   }
@@ -126,32 +151,58 @@ class _OTPTextFieldState extends State<OTPTextField> {
   ///
   /// * Requires a build context
   /// * Requires Int position of the field
-  Widget buildTextField(BuildContext context, int i) {
-    if (_focusNodes[i] == null) _focusNodes[i] = new FocusNode();
+  Widget buildTextField(BuildContext context, int index) {
+    if (_focusNodes[index] == null) _focusNodes[index] = FocusNode();
 
-    if (_textControllers[i] == null)
-      _textControllers[i] = new TextEditingController();
+    if (_textControllers[index] == null) {
+      _textControllers[index] = TextEditingController();
+    }
+    final isLast = index == widget.length - 1;
+
+    InputBorder _getBorder(Color color) {
+      final colorOrError =
+          widget.hasError ? _otpFieldStyle.errorBorderColor : color;
+
+      return widget.fieldStyle == FieldStyle.box
+          ? OutlineInputBorder(
+              borderSide: BorderSide(color: colorOrError),
+              borderRadius: BorderRadius.circular(widget.outlineBorderRadius),
+            )
+          : UnderlineInputBorder(borderSide: BorderSide(color: colorOrError));
+    }
 
     return Container(
       width: widget.fieldWidth,
-      margin: widget.margin,
-      decoration: BoxDecoration(
-          color: _otpFieldStyle.backgroundColor,
-          borderRadius: BorderRadius.circular(widget.outlineBorderRadius)),
+      margin: widget.margin ??
+          EdgeInsets.only(
+            right: isLast ? 0 : widget.spaceBetween,
+          ),
       child: TextField(
-        controller: _textControllers[i],
+        controller: _textControllers[index],
         keyboardType: widget.keyboardType,
+        textCapitalization: widget.textCapitalization,
         textAlign: TextAlign.center,
         style: widget.style,
-        focusNode: _focusNodes[i],
+        inputFormatters: widget.inputFormatter,
+        maxLength: 1,
+        focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
         decoration: InputDecoration(
-            counterText: "",
-            border: _getBorder(_otpFieldStyle.borderColor),
-            focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
-            enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
-            disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
-            errorBorder: _getBorder(_otpFieldStyle.errorBorderColor)),
+          isDense: widget.isDense,
+          filled: true,
+          fillColor: _otpFieldStyle.backgroundColor,
+          counterText: "",
+          contentPadding: widget.contentPadding,
+          border: _getBorder(_otpFieldStyle.borderColor),
+          focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
+          enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
+          disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
+          errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+          focusedErrorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+          errorText: null,
+          // to hide the error text
+          errorStyle: const TextStyle(height: 0, fontSize: 0),
+        ),
         onChanged: (String str) {
           if (str.length > 1) {
             if(str.length == widget.length){
@@ -172,21 +223,22 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Check if the current value at this position is empty
           // If it is move focus to previous text field.
           if (str.isEmpty) {
-            if (i == 0) return;
-            _focusNodes[i]!.unfocus();
-            _focusNodes[i - 1]!.requestFocus();
+            if (index == 0) return;
+            _focusNodes[index]!.unfocus();
+            _focusNodes[index - 1]!.requestFocus();
           }
 
           // Update the current pin
           setState(() {
-            _pin[i] = str;
+            _pin[index] = str;
           });
 
           // Remove focus
-          if (str.isNotEmpty) _focusNodes[i]!.unfocus();
+          if (str.isNotEmpty) _focusNodes[index]!.unfocus();
           // Set focus to the next field if available
-          if (i + 1 != widget.length && str.isNotEmpty)
-            FocusScope.of(context).requestFocus(_focusNodes[i + 1]);
+          if (index + 1 != widget.length && str.isNotEmpty) {
+            FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+          }
 
           String currentPin = _getCurrentPin();
 
@@ -195,7 +247,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length) {
-            widget.onCompleted!(currentPin);
+            widget.onCompleted?.call(currentPin);
           }
 
           // Call the `onChanged` callback function
@@ -203,14 +255,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
         },
       ),
     );
-  }
-
-  InputBorder _getBorder(Color color) {
-    return widget.fieldStyle == FieldStyle.box
-        ? OutlineInputBorder(
-            borderSide: BorderSide(color: color),
-            borderRadius: BorderRadius.circular(widget.outlineBorderRadius))
-        : UnderlineInputBorder(borderSide: BorderSide(color: color));
   }
 
   String _getCurrentPin() {
@@ -241,7 +285,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     if (!_pin.contains(null) &&
         !_pin.contains('') &&
         currentPin.length == widget.length) {
-      widget.onCompleted!(currentPin);
+      widget.onCompleted?.call(currentPin);
     }
 
     // Call the `onChanged` callback function
@@ -278,7 +322,7 @@ class OtpFieldController {
   void set(List<String> pin) {
     final textFieldLength = _otpTextFieldState.widget.length;
     if (pin.length < textFieldLength) {
-      throw new Exception(
+      throw Exception(
           "Pin length must be same as field length. Expected: $textFieldLength, Found ${pin.length}");
     }
 
@@ -297,18 +341,16 @@ class OtpFieldController {
     }
 
     final widget = _otpTextFieldState.widget;
-    if (widget.onChanged != null) {
-      widget.onChanged!(newPin);
-    }
-    if (widget.onCompleted != null) {
-      widget.onCompleted!(newPin);
-    }
+
+    widget.onChanged?.call(newPin);
+
+    widget.onCompleted?.call(newPin);
   }
 
   void setValue(String value, int position) {
     final maxIndex = _otpTextFieldState.widget.length - 1;
     if (position > maxIndex) {
-      throw new Exception(
+      throw Exception(
           "Provided position is out of bounds for the OtpTextField");
     }
 
@@ -335,7 +377,7 @@ class OtpFieldController {
   void setFocus(int position) {
     final maxIndex = _otpTextFieldState.widget.length - 1;
     if (position > maxIndex) {
-      throw new Exception(
+      throw Exception(
           "Provided position is out of bounds for the OtpTextField");
     }
 
