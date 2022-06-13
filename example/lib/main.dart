@@ -37,11 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.cleaning_services),
         onPressed: () {
           print("Floating button was pressed.");
-          otpController.set(['2', '3', '5', '5', '7']);
-          //otpController.clear();
-          // otpController.set(['2', '3', '5', '5', '7']);
-          // otpController.setValue('3', 0);
-          // otpController.setFocus(1);
+          otpController.clear();
         },
       ),
       body: Center(
@@ -59,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             onCompleted: (pin) {
               print("Completed: " + pin);
-              otpController.setFocus(4);
             }),
       ),
     );

@@ -210,16 +210,18 @@ class _OTPTextFieldState extends State<OTPTextField> {
           errorStyle: const TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
-          debugPrint('Changed');
           if (str.length > 1) {
             if (str.length == widget.length && index == widget.length - 1) {
               print('Handling Paste');
               _handlePaste(str);
               return;
             } else {
+              // User modified same position
               if (_pin.length >= index + 1) {
+                // remove previously entered digit
                 str = str.replaceFirst(_pin[index], '');
               } else {
+                // Take the last entered digit as otp entry
                 int len = str.length;
                 str = str[len - 1];
               }
@@ -257,7 +259,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           if (!_pin.contains(null) &&
               !_pin.contains('') &&
               currentPin.length == widget.length &&
-              index + 1 == widget.length) {
+              index + 1 == widget.length) { // Only call this when user is on last digit
             widget.onCompleted?.call(currentPin);
           }
 
