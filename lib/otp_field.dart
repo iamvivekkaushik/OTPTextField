@@ -1,7 +1,8 @@
+import 'package:mbnkbiz/libs/otp_text_field/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otp_text_field/otp_field_style.dart';
-import 'package:otp_text_field/style.dart';
+
+import 'otp_field_style.dart';
 
 class OTPTextField extends StatefulWidget {
   /// TextField Controller
@@ -32,8 +33,6 @@ class OTPTextField extends StatefulWidget {
 
   /// show the error border or not
   final bool hasError;
-
-  final TextCapitalization textCapitalization;
 
   /// The style to use for the text being edited.
   final TextStyle style;
@@ -66,6 +65,7 @@ class OTPTextField extends StatefulWidget {
   final ValueChanged<String>? onCompleted;
 
   final List<TextInputFormatter>? inputFormatter;
+  final bool isWrapped;
 
   const OTPTextField({
     Key? key,
@@ -80,12 +80,12 @@ class OTPTextField extends StatefulWidget {
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
     this.outlineBorderRadius: 10,
-    this.textCapitalization = TextCapitalization.none,
     this.textFieldAlignment = MainAxisAlignment.spaceBetween,
     this.obscureText = false,
     this.fieldStyle = FieldStyle.underline,
     this.onChanged,
     this.inputFormatter,
+    this.isWrapped = false,
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
     this.isDense = false,
@@ -137,13 +137,20 @@ class _OTPTextFieldState extends State<OTPTextField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: widget.width,
-      child: Row(
-        mainAxisAlignment: widget.textFieldAlignment,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(widget.length, (index) {
-          return buildTextField(context, index);
-        }),
-      ),
+      child: !widget.isWrapped
+          ? Row(
+              mainAxisAlignment: widget.textFieldAlignment,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: List.generate(widget.length, (index) {
+                return buildTextField(context, index);
+              }),
+            )
+          : Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: List.generate(widget.length, (index) {
+                return buildTextField(context, index);
+              }),
+            ),
     );
   }
 
@@ -180,7 +187,6 @@ class _OTPTextFieldState extends State<OTPTextField> {
       child: TextField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
-        textCapitalization: widget.textCapitalization,
         textAlign: TextAlign.center,
         style: widget.style,
         inputFormatters: widget.inputFormatter,
