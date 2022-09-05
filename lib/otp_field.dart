@@ -17,11 +17,6 @@ class OTPTextField extends StatefulWidget {
   /// Width of the single OTP Field
   final double fieldWidth;
 
-  /// margin around the text fields
-  @Deprecated(
-      "Since there is an issue with the margin because it's around each item, we use [spaceBetween] from now on.")
-  final EdgeInsetsGeometry? margin;
-
   /// space between the text fields
   final double spaceBetween;
 
@@ -76,7 +71,6 @@ class OTPTextField extends StatefulWidget {
     this.spaceBetween = 0,
     this.otpFieldStyle,
     this.hasError = false,
-    this.margin,
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
     this.outlineBorderRadius: 10,
@@ -159,11 +153,20 @@ class _OTPTextFieldState extends State<OTPTextField> {
   /// * Requires a build context
   /// * Requires Int position of the field
   Widget buildTextField(BuildContext context, int index) {
-    if (_focusNodes[index] == null) _focusNodes[index] = FocusNode();
+    FocusNode? focusNode = _focusNodes[index];
+    TextEditingController? textEditingController = _textControllers[index];
 
-    if (_textControllers[index] == null) {
-      _textControllers[index] = TextEditingController();
+    // if focus node doesn't exist, create it.
+    if (focusNode == null) {
+      _focusNodes[index] = FocusNode();
+      focusNode = _focusNodes[index];
+      focusNode?.addListener((() => handleFocusChange(index)));
     }
+    if (textEditingController == null) {
+      _textControllers[index] = TextEditingController();
+      textEditingController = _textControllers[index];
+    }
+
     final isLast = index == widget.length - 1;
 
     InputBorder _getBorder(Color color) {
@@ -180,10 +183,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     return Container(
       width: widget.fieldWidth,
-      margin: widget.margin ??
-          EdgeInsets.only(
-            right: isLast ? 0 : widget.spaceBetween,
-          ),
+      margin: EdgeInsets.only(
+        right: isLast ? 0 : widget.spaceBetween,
+      ),
       child: TextField(
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
@@ -250,6 +252,18 @@ class _OTPTextFieldState extends State<OTPTextField> {
         },
       ),
     );
+  }
+
+  void handleFocusChange(int index) {
+    FocusNode? focusNode = _focusNodes[index];
+    TextEditingController? controller = _textControllers[index];
+
+    if (focusNode == null || controller == null) return;
+
+    if (focusNode.hasFocus) {
+      controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: controller.text.length));
+    }
   }
 
   String _getCurrentPin() {
