@@ -62,29 +62,33 @@ class OTPTextField extends StatefulWidget {
 
   final List<TextInputFormatter>? inputFormatter;
 
-  const OTPTextField({
-    Key? key,
-    this.length = 4,
-    this.width = 10,
-    this.controller,
-    this.fieldWidth = 30,
-    this.spaceBetween = 0,
-    this.otpFieldStyle,
-    this.hasError = false,
-    this.keyboardType = TextInputType.number,
-    this.style = const TextStyle(),
-    this.outlineBorderRadius: 10,
-    this.textCapitalization = TextCapitalization.none,
-    this.textFieldAlignment = MainAxisAlignment.spaceBetween,
-    this.obscureText = false,
-    this.fieldStyle = FieldStyle.underline,
-    this.onChanged,
-    this.inputFormatter,
-    this.contentPadding =
-        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-    this.isDense = false,
-    this.onCompleted,
-  })  : assert(length > 1),
+  /// cursor color
+  final Color cursorColor;
+
+  const OTPTextField(
+      {Key? key,
+      this.length = 4,
+      this.width = 10,
+      this.controller,
+      this.fieldWidth = 30,
+      this.spaceBetween = 0,
+      this.otpFieldStyle,
+      this.hasError = false,
+      this.keyboardType = TextInputType.number,
+      this.style = const TextStyle(),
+      this.outlineBorderRadius: 10,
+      this.textCapitalization = TextCapitalization.none,
+      this.textFieldAlignment = MainAxisAlignment.spaceBetween,
+      this.obscureText = false,
+      this.fieldStyle = FieldStyle.underline,
+      this.onChanged,
+      this.inputFormatter,
+      this.contentPadding =
+          const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      this.isDense = false,
+      this.onCompleted,
+      this.cursorColor = Colors.black})
+      : assert(length > 1),
         super(key: key);
 
   @override
@@ -180,6 +184,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         right: isLast ? 0 : widget.spaceBetween,
       ),
       child: TextField(
+        cursorColor: widget.cursorColor,
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization,
