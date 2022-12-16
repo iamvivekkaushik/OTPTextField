@@ -186,7 +186,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         textAlign: TextAlign.center,
         style: widget.style,
         inputFormatters: widget.inputFormatter,
-        maxLength: 1,
+        maxLength: 2,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
         decoration: InputDecoration(
@@ -206,6 +206,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
           errorStyle: const TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
+          
+          if (index != 0) {
+            str = str.trim();
+            _textControllers[index]?.text = str;
+          }
+          
           if (str.length > 1) {
             _handlePaste(str);
             return;
@@ -229,6 +235,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
           // Set focus to the next field if available
           if (index + 1 != widget.length && str.isNotEmpty) {
             FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+            _textControllers[index + 1]?.text = " ";
           }
 
           String currentPin = _getCurrentPin();
