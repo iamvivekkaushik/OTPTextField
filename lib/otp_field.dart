@@ -73,7 +73,7 @@ class OTPTextField extends StatefulWidget {
     this.hasError = false,
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
-    this.outlineBorderRadius: 10,
+    this.outlineBorderRadius = 10,
     this.textCapitalization = TextCapitalization.none,
     this.textFieldAlignment = MainAxisAlignment.spaceBetween,
     this.obscureText = false,
@@ -88,10 +88,10 @@ class OTPTextField extends StatefulWidget {
         super(key: key);
 
   @override
-  _OTPTextFieldState createState() => _OTPTextFieldState();
+  State<StatefulWidget> createState() => OTPTextFieldState();
 }
 
-class _OTPTextFieldState extends State<OTPTextField> {
+class OTPTextFieldState extends State<OTPTextField> {
   late OtpFieldStyle _otpFieldStyle;
   late List<FocusNode?> _focusNodes;
   late List<TextEditingController?> _textControllers;
@@ -123,7 +123,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   @override
   void dispose() {
-    _textControllers.forEach((controller) => controller?.dispose());
+    for (var controller in _textControllers) {
+      controller?.dispose();
+    }
     super.dispose();
   }
 
@@ -135,7 +137,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         mainAxisAlignment: widget.textFieldAlignment,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(widget.length, (index) {
-          return buildTextField(context, index);
+          return _buildTextField(context, index);
         }),
       ),
     );
@@ -145,7 +147,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
   ///
   /// * Requires a build context
   /// * Requires Int position of the field
-  Widget buildTextField(BuildContext context, int index) {
+  Widget _buildTextField(BuildContext context, int index) {
     FocusNode? focusNode = _focusNodes[index];
     TextEditingController? textEditingController = _textControllers[index];
 
@@ -162,7 +164,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     final isLast = index == widget.length - 1;
 
-    InputBorder _getBorder(Color color) {
+    InputBorder getBorder(Color color) {
       final colorOrError =
           widget.hasError ? _otpFieldStyle.errorBorderColor : color;
 
@@ -195,12 +197,12 @@ class _OTPTextFieldState extends State<OTPTextField> {
           fillColor: _otpFieldStyle.backgroundColor,
           counterText: "",
           contentPadding: widget.contentPadding,
-          border: _getBorder(_otpFieldStyle.borderColor),
-          focusedBorder: _getBorder(_otpFieldStyle.focusBorderColor),
-          enabledBorder: _getBorder(_otpFieldStyle.enabledBorderColor),
-          disabledBorder: _getBorder(_otpFieldStyle.disabledBorderColor),
-          errorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
-          focusedErrorBorder: _getBorder(_otpFieldStyle.errorBorderColor),
+          border: getBorder(_otpFieldStyle.borderColor),
+          focusedBorder: getBorder(_otpFieldStyle.focusBorderColor),
+          enabledBorder: getBorder(_otpFieldStyle.enabledBorderColor),
+          disabledBorder: getBorder(_otpFieldStyle.disabledBorderColor),
+          errorBorder: getBorder(_otpFieldStyle.errorBorderColor),
+          focusedErrorBorder: getBorder(_otpFieldStyle.errorBorderColor),
           errorText: null,
           // to hide the error text
           errorStyle: const TextStyle(height: 0, fontSize: 0),
@@ -262,9 +264,9 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
   String _getCurrentPin() {
     String currentPin = "";
-    _pin.forEach((String value) {
+    for (var value in _pin) {
       currentPin += value;
-    });
+    }
     return currentPin;
   }
 
@@ -294,12 +296,22 @@ class _OTPTextFieldState extends State<OTPTextField> {
     // Call the `onChanged` callback function
     widget.onChanged!(currentPin);
   }
+
+  @override
+  void didUpdateWidget(covariant OTPTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.otpFieldStyle != null &&
+        widget.otpFieldStyle != oldWidget.otpFieldStyle) {
+      _otpFieldStyle = widget.otpFieldStyle!;
+    }
+  }
 }
 
 class OtpFieldController {
-  late _OTPTextFieldState _otpTextFieldState;
+  late OTPTextFieldState _otpTextFieldState;
 
-  void setOtpTextFieldState(_OTPTextFieldState state) {
+  void setOtpTextFieldState(OTPTextFieldState state) {
     _otpTextFieldState = state;
   }
 
@@ -310,11 +322,11 @@ class OtpFieldController {
     });
 
     final textControllers = _otpTextFieldState._textControllers;
-    textControllers.forEach((textController) {
+    for (var textController in textControllers) {
       if (textController != null) {
         textController.text = '';
       }
-    });
+    }
 
     final firstFocusNode = _otpTextFieldState._focusNodes[0];
     if (firstFocusNode != null) {
@@ -367,9 +379,9 @@ class OtpFieldController {
     }
 
     String newPin = "";
-    currentPin.forEach((item) {
+    for (var item in currentPin) {
       newPin += item;
-    });
+    }
 
     final widget = _otpTextFieldState.widget;
     if (widget.onChanged != null) {
