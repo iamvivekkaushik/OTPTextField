@@ -186,7 +186,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         textAlign: TextAlign.center,
         style: widget.style,
         inputFormatters: widget.inputFormatter,
-        maxLength: 1,
+        maxLength: widget.length,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
         decoration: InputDecoration(
@@ -206,7 +206,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
           errorStyle: const TextStyle(height: 0, fontSize: 0),
         ),
         onChanged: (String str) {
-          if (str.length > 1) {
+          //To prevent the second character in the field.
+          if (str.length == 2) {
+            str = str.substring(1);
+            _textControllers[index]!.text = str;
+          }else if(str.length > 1){
             _handlePaste(str);
             return;
           }
