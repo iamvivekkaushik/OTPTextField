@@ -241,8 +241,11 @@ class _OTPTextFieldState extends State<OTPTextField> {
             widget.onCompleted?.call(currentPin);
           }
 
-          // Call the `onChanged` callback function
-          widget.onChanged!(currentPin);
+          // Call the `onChanged` callback function -- deprecated
+          // widget.onChanged!(currentPin); this will cause _CastError which means onChanged is null
+
+          // Call the `onChanged` callback function if it exists
+          widget.onChanged?.call(currentPin);
         },
       ),
     );
