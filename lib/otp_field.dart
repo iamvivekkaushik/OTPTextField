@@ -27,6 +27,7 @@ class OTPTextField extends StatefulWidget {
 
   /// show the error border or not
   final bool hasError;
+  final Color cursorColor;
 
   final TextCapitalization textCapitalization;
 
@@ -70,6 +71,7 @@ class OTPTextField extends StatefulWidget {
     this.fieldWidth = 30,
     this.spaceBetween = 0,
     this.otpFieldStyle,
+    this.cursorColor,
     this.hasError = false,
     this.keyboardType = TextInputType.number,
     this.style = const TextStyle(),
@@ -180,6 +182,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         right: isLast ? 0 : widget.spaceBetween,
       ),
       child: TextField(
+        cursorColor : widget.cursorColor,
         controller: _textControllers[index],
         keyboardType: widget.keyboardType,
         textCapitalization: widget.textCapitalization,
