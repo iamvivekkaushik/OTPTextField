@@ -6,6 +6,9 @@ import 'package:otp_text_field/style.dart';
 class OTPTextField extends StatefulWidget {
   /// TextField Controller
   final OtpFieldController? controller;
+  
+  /// TextCapitalization
+  final TextCapitalization? textCapitalization;
 
   /// Number of the OTP Fields
   final int length;
@@ -69,6 +72,7 @@ class OTPTextField extends StatefulWidget {
     this.controller,
     this.fieldWidth = 30,
     this.spaceBetween = 0,
+    this.textCapitalization = TextCapitalization.none,
     this.otpFieldStyle,
     this.hasError = false,
     this.keyboardType = TextInputType.number,
@@ -187,6 +191,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
         style: widget.style,
         inputFormatters: widget.inputFormatter,
         maxLength: 1,
+        textCapitalization: widget.textCapitalization!,
         focusNode: _focusNodes[index],
         obscureText: widget.obscureText,
         decoration: InputDecoration(

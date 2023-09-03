@@ -46,6 +46,7 @@ OTPTextField(
     fontSize: 17
   ),
   textFieldAlignment: MainAxisAlignment.spaceAround,
+  textCapitalization: TextCapitalization.characters,
   fieldStyle: FieldStyle.underline,
   onCompleted: (pin) {
     print("Completed: " + pin);
