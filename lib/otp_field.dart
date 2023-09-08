@@ -60,6 +60,9 @@ class OTPTextField extends StatefulWidget {
   /// Callback function, called when pin is completed.
   final ValueChanged<String>? onCompleted;
 
+  /// Modify the input direction in the OTP fields.
+  final TextDirection? textDirection;
+
   final List<TextInputFormatter>? inputFormatter;
 
   const OTPTextField({
@@ -79,6 +82,7 @@ class OTPTextField extends StatefulWidget {
     this.obscureText = false,
     this.fieldStyle = FieldStyle.underline,
     this.onChanged,
+    this.textDirection,
     this.inputFormatter,
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -132,6 +136,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     return SizedBox(
       width: widget.width,
       child: Row(
+        textDirection: widget.textDirection,
         mainAxisAlignment: widget.textFieldAlignment,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(widget.length, (index) {
