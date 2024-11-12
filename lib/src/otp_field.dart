@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otp_text_field/otp_field_style.dart';
-import 'package:otp_text_field/style.dart';
+import 'otp_field_style.dart';
+import 'style.dart';
 
 class OTPTextField extends StatefulWidget {
   /// TextField Controller

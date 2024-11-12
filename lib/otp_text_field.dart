@@ -1,4 +1,5 @@
 library otp_text_field;
 
-export 'otp_field.dart';
-export 'otp_field_style.dart';
+export 'src/otp_field.dart';
+export 'src/otp_field_style.dart';
+export 'src/style.dart';
