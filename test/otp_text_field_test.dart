@@ -204,6 +204,58 @@ void main() {
     expect(lastChanged, '12');
   });
 
+  testWidgets('backspace on an empty field moves focus to the previous field',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp());
+
+    await tester.enterText(fieldAt(0), '1');
+    await tester.enterText(fieldAt(1), '2');
+    await tester.pump();
+    // After typing two digits the focus sits on the empty third field.
+    expect(tester.widget<TextField>(fieldAt(2)).focusNode!.hasFocus, isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.backspace);
+    await tester.pump();
+
+    // Focus jumps back to the filled field, without clearing its digit.
+    expect(tester.widget<TextField>(fieldAt(1)).focusNode!.hasFocus, isTrue);
+    expect(tester.widget<TextField>(fieldAt(1)).controller!.text, '2');
+  });
+
+  testWidgets('backspace chains backwards through the fields',
+      (tester) async {
+    String? lastChanged;
+
+    await tester.pumpWidget(buildTestApp(onChanged: (pin) => lastChanged = pin));
+
+    await tester.enterText(fieldAt(0), '1');
+    await tester.enterText(fieldAt(1), '2');
+    await tester.pump();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.backspace); // jump back
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.backspace); // delete '2'
+    await tester.pump();
+
+    expect(tester.widget<TextField>(fieldAt(1)).controller!.text, '');
+    expect(tester.widget<TextField>(fieldAt(0)).focusNode!.hasFocus, isTrue);
+    expect(lastChanged, '1');
+  });
+
+  testWidgets('backspace on the empty first field does nothing',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp());
+
+    await tester.tap(fieldAt(0));
+    await tester.pump();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.backspace);
+    await tester.pump();
+
+    expect(tester.widget<TextField>(fieldAt(0)).focusNode!.hasFocus, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('cursor and selection visuals are hidden by default',
       (tester) async {
     await tester.pumpWidget(buildTestApp());

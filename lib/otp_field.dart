@@ -139,6 +139,7 @@ class _OTPTextFieldState extends State<OTPTextField> {
     _focusNodes = List.generate(widget.length, (index) {
       final focusNode = FocusNode();
       focusNode.addListener(() => _handleFocusChange(index));
+      focusNode.onKeyEvent = (node, event) => _handleKeyEvent(index, event);
       return focusNode;
     });
     _textControllers =
@@ -364,6 +365,28 @@ class _OTPTextFieldState extends State<OTPTextField> {
     }
 
     _notifyPinChanged();
+  }
+
+  /// Moves focus to the previous field when backspace is pressed on an
+  /// already-empty field.
+  ///
+  /// A [TextField] does not call [TextField.onChanged] when deleting from
+  /// an empty field, so without this the focus would get stuck on the
+  /// empty box instead of jumping back.
+  KeyEventResult _handleKeyEvent(int index, KeyEvent event) {
+    final bool isBackspace = event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace;
+
+    if (!isBackspace ||
+        index == 0 ||
+        _textControllers[index].text.isNotEmpty) {
+      // Not a backspace, the first field, or a field with content: let the
+      // normal editing flow (and _onDigitCleared) handle it.
+      return KeyEventResult.ignored;
+    }
+
+    _focusNodes[index - 1].requestFocus();
+    return KeyEventResult.handled;
   }
 
   void _handleFocusChange(int index) {
