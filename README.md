@@ -19,8 +19,12 @@ ___
 [![Twitter](https://img.shields.io/badge/Twitter-@iamvivekkaushik-blue.svg?style=flat)](https://twitter.com/iamvivekkaushik)
 
 ## 📱Screenshots
+
+From the gallery of designs in the [example app](./example):
+
 <p align="center">
-<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/screen.png" width="300"/>
+<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/gallery_top.png" width="300"/>
+<img src="https://raw.githubusercontent.com/iamvivekkaushik/OTPTextField/master/screenshot/gallery_bottom.png" width="300"/>
 </p>
 <br>
 
@@ -58,7 +62,7 @@ For more detail on usage, check out the example provided.
 
 ## 🙍🏻‍♂️ Author
 
-* [Vivek Kaushik](http://github.com/iamvivekkaushik/)
+* [Vivek Kaushik](https://github.com/iamvivekkaushik/)
 
 
 ## 📄 License

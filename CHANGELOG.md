@@ -1,6 +1,8 @@
-### [1.1.4] - 16/04//2026
-* fixed issue with paste not working
+### [1.1.5] - 17/04/2026
 * fixed backspace not moving to the previous field when pressed on an empty field
+
+### [1.1.4] - 16/04/2026
+* fixed issue with paste not working
 * ui fix for cursor selecting the text when text field is highlighted
 * added tests
 * updated dependencies
