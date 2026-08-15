@@ -1,3 +1,9 @@
+### [1.1.4] - 16/04//2026
+* fixed issue with paste not working
+* ui fix for cursor selecting the text when text field is highlighted
+* added tests
+* updated dependencies
+
 ### [1.1.3] - 25/04/2022
 
 * added background color on text field
