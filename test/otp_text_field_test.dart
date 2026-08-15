@@ -9,6 +9,7 @@ Widget buildTestApp({
   List<TextInputFormatter>? inputFormatter,
   ValueChanged<String>? onChanged,
   ValueChanged<String>? onCompleted,
+  bool? showCursor,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -20,6 +21,7 @@ Widget buildTestApp({
         controller: controller,
         inputFormatter: inputFormatter,
         keyboardType: TextInputType.number,
+        showCursor: showCursor ?? false,
         onChanged: onChanged,
         onCompleted: onCompleted,
       ),
@@ -122,6 +124,34 @@ void main() {
     expect(completed, '1234');
   });
 
+  testWidgets('pasting via the IME input connection distributes digits',
+      (tester) async {
+    String? completed;
+
+    await tester.pumpWidget(buildTestApp(onCompleted: (pin) => completed = pin));
+
+    // Focus the first field so it has an active input connection.
+    await tester.tap(fieldAt(0));
+    await tester.pump();
+
+    // Simulates a long-press / keyboard paste: the platform delivers the
+    // full pasted text through the input connection, which goes through
+    // the input formatters (including any maxLength enforcement), unlike
+    // tester.enterText.
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(
+        text: '1234',
+        selection: TextSelection.collapsed(offset: 4),
+      ),
+    );
+    await tester.pump();
+
+    for (int i = 0; i < 4; i++) {
+      expect(tester.widget<TextField>(fieldAt(i)).controller!.text, '${i + 1}');
+    }
+    expect(completed, '1234');
+  });
+
   testWidgets('pasting longer codes truncates to the field length',
       (tester) async {
     String? completed;
@@ -148,6 +178,10 @@ void main() {
     await tester.pump();
     expect(completed, '123456');
 
+    // Reset, so we can assert that onCompleted is not called again for
+    // the partial paste below.
+    completed = null;
+
     await tester.enterText(fieldAt(0), '78');
     await tester.pump();
 
@@ -168,6 +202,29 @@ void main() {
     await tester.pump();
 
     expect(lastChanged, '12');
+  });
+
+  testWidgets('cursor and selection visuals are hidden by default',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp());
+
+    expect(tester.widget<TextField>(fieldAt(0)).showCursor, isFalse);
+
+    final ThemeData theme = Theme.of(tester.element(fieldAt(0)));
+    expect(theme.textSelectionTheme.selectionColor, Colors.transparent);
+    expect(
+        theme.textSelectionTheme.selectionHandleColor, Colors.transparent);
+  });
+
+  testWidgets('showCursor: true keeps the default cursor and selection',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp(showCursor: true));
+
+    expect(tester.widget<TextField>(fieldAt(0)).showCursor, isTrue);
+
+    final ThemeData theme = Theme.of(tester.element(fieldAt(0)));
+    expect(theme.textSelectionTheme.selectionColor,
+        isNot(Colors.transparent));
   });
 
   testWidgets('OtpFieldController.clear resets all fields', (tester) async {

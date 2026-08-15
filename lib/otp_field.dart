@@ -43,6 +43,14 @@ class OTPTextField extends StatefulWidget {
   /// Obscure Text if data is sensitive
   final bool obscureText;
 
+  /// Whether to show the cursor and text selection visuals (highlight and
+  /// selection handles) in the fields.
+  ///
+  /// Defaults to false: the focused field is indicated only by its focused
+  /// border. The internal selection used so that typing replaces the
+  /// focused digit is kept invisible instead.
+  final bool showCursor;
+
   /// Whether the [InputDecorator.child] is part of a dense form (i.e., uses less vertical
   /// space).
   final bool isDense;
@@ -90,6 +98,7 @@ class OTPTextField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.textFieldAlignment = MainAxisAlignment.spaceBetween,
     this.obscureText = false,
+    this.showCursor = false,
     this.fieldStyle = FieldStyle.underline,
     this.onChanged,
     this.inputFormatter,
@@ -231,45 +240,70 @@ class _OTPTextFieldState extends State<OTPTextField> {
   }) {
     final isLast = index == widget.length - 1;
 
+    Widget field = Semantics(
+      label: 'Digit ${index + 1} of ${widget.length}',
+      child: TextField(
+        controller: _textControllers[index],
+        keyboardType: widget.keyboardType,
+        textCapitalization: widget.textCapitalization,
+        textAlign: TextAlign.center,
+        style: widget.style,
+        showCursor: widget.showCursor,
+        inputFormatters: widget.inputFormatter,
+        maxLength: 1,
+        // Do not let the built-in length enforcement truncate input: a
+        // pasted OTP must reach onChanged intact so it can be
+        // distributed across the fields by _handlePaste. Multi-digit
+        // values are handled in _onFieldChanged instead.
+        maxLengthEnforcement: MaxLengthEnforcement.none,
+        focusNode: _focusNodes[index],
+        obscureText: widget.obscureText,
+        enabled: widget.enabled,
+        autofocus: widget.autofocus && index == 0,
+        autofillHints: index == 0 ? widget.autofillHints : null,
+        decoration: InputDecoration(
+          isDense: widget.isDense,
+          filled: true,
+          fillColor: _otpFieldStyle.backgroundColor,
+          counterText: "",
+          contentPadding: widget.contentPadding,
+          border: border,
+          focusedBorder: focusedBorder,
+          enabledBorder: enabledBorder,
+          disabledBorder: disabledBorder,
+          errorBorder: errorBorder,
+          focusedErrorBorder: errorBorder,
+          errorText: null,
+          // to hide the error text
+          errorStyle: const TextStyle(height: 0, fontSize: 0),
+        ),
+        onChanged: (String value) => _onFieldChanged(index, value),
+      ),
+    );
+
+    if (!widget.showCursor) {
+      // Hide the selection highlight and handles, so focus is indicated
+      // only by the field's focused border. The selection itself stays
+      // functional (typing replaces the focused digit, paste still works).
+      final TextSelectionThemeData selectionTheme =
+          Theme.of(context).textSelectionTheme;
+      field = Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: selectionTheme.copyWith(
+            selectionColor: Colors.transparent,
+            selectionHandleColor: Colors.transparent,
+          ),
+        ),
+        child: field,
+      );
+    }
+
     return Container(
       width: widget.fieldWidth,
       margin: EdgeInsets.only(
         right: isLast ? 0 : widget.spaceBetween,
       ),
-      child: Semantics(
-        label: 'Digit ${index + 1} of ${widget.length}',
-        child: TextField(
-          controller: _textControllers[index],
-          keyboardType: widget.keyboardType,
-          textCapitalization: widget.textCapitalization,
-          textAlign: TextAlign.center,
-          style: widget.style,
-          inputFormatters: widget.inputFormatter,
-          maxLength: 1,
-          focusNode: _focusNodes[index],
-          obscureText: widget.obscureText,
-          enabled: widget.enabled,
-          autofocus: widget.autofocus && index == 0,
-          autofillHints: index == 0 ? widget.autofillHints : null,
-          decoration: InputDecoration(
-            isDense: widget.isDense,
-            filled: true,
-            fillColor: _otpFieldStyle.backgroundColor,
-            counterText: "",
-            contentPadding: widget.contentPadding,
-            border: border,
-            focusedBorder: focusedBorder,
-            enabledBorder: enabledBorder,
-            disabledBorder: disabledBorder,
-            errorBorder: errorBorder,
-            focusedErrorBorder: errorBorder,
-            errorText: null,
-            // to hide the error text
-            errorStyle: const TextStyle(height: 0, fontSize: 0),
-          ),
-          onChanged: (String value) => _onFieldChanged(index, value),
-        ),
-      ),
+      child: field,
     );
   }
 
