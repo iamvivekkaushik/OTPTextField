@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otp_text_field/otp_field_style.dart';
@@ -83,6 +85,15 @@ class OTPTextField extends StatefulWidget {
   /// iOS and Android.
   final List<String>? autofillHints;
 
+  /// Whether focus should jump to the first empty field when a later field
+  /// gains focus.
+  ///
+  /// Defaults to false: the user can tap any box and type into it, even if
+  /// earlier boxes are still empty. When true, focusing a box beyond the
+  /// first empty one redirects focus to the first empty box, so the code
+  /// is always entered contiguously from the start.
+  final bool redirectFocusToFirstEmptyField;
+
   const OTPTextField({
     Key? key,
     this.length = 4,
@@ -109,6 +120,7 @@ class OTPTextField extends StatefulWidget {
     this.autofocus = false,
     this.enabled = true,
     this.autofillHints,
+    this.redirectFocusToFirstEmptyField = true,
   })  : assert(length > 1),
         super(key: key);
 
@@ -196,20 +208,26 @@ class _OTPTextFieldState extends State<OTPTextField> {
 
     return SizedBox(
       width: widget.width,
-      child: Row(
-        mainAxisAlignment: widget.textFieldAlignment,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(widget.length, (index) {
-          return _buildTextField(
-            context,
-            index,
-            border: border,
-            focusedBorder: focusedBorder,
-            enabledBorder: enabledBorder,
-            disabledBorder: disabledBorder,
-            errorBorder: errorBorder,
-          );
-        }),
+      // Verification codes are inherently left-to-right. Without this, in
+      // an RTL locale the first field would be laid out on the far right
+      // and the code would appear typed in reverse order.
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          mainAxisAlignment: widget.textFieldAlignment,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: List.generate(widget.length, (index) {
+            return _buildTextField(
+              context,
+              index,
+              border: border,
+              focusedBorder: focusedBorder,
+              enabledBorder: enabledBorder,
+              disabledBorder: disabledBorder,
+              errorBorder: errorBorder,
+            );
+          }),
+        ),
       ),
     );
   }
@@ -390,6 +408,20 @@ class _OTPTextFieldState extends State<OTPTextField> {
   }
 
   void _handleFocusChange(int index) {
+    if (widget.redirectFocusToFirstEmptyField &&
+        _focusNodes[index].hasFocus) {
+      final int firstEmpty = _pin.indexOf('');
+      if (firstEmpty != -1 && firstEmpty < index) {
+        // Defer to the next microtask so the focus traversal that brought
+        // us here can settle before focus moves to the first empty field.
+        // The recursion terminates because firstEmpty is not < firstEmpty.
+        scheduleMicrotask(() {
+          if (mounted) _focusNodes[firstEmpty].requestFocus();
+        });
+        return;
+      }
+    }
+
     final TextEditingController controller = _textControllers[index];
 
     if (_focusNodes[index].hasFocus && controller.text.isNotEmpty) {

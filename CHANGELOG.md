@@ -1,5 +1,7 @@
 ### [1.1.5] - 17/04/2026
 * fixed backspace not moving to the previous field when pressed on an empty field
+* fixed fields appearing reversed in RTL locales (field layout is now always left-to-right)
+* added redirectFocusToFirstEmptyField option: when true, tapping a box beyond the first empty one moves focus to the first empty box, so the code is always entered contiguously
 
 ### [1.1.4] - 16/04/2026
 * fixed issue with paste not working

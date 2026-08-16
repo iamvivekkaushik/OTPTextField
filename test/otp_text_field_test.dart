@@ -10,6 +10,7 @@ Widget buildTestApp({
   ValueChanged<String>? onChanged,
   ValueChanged<String>? onCompleted,
   bool? showCursor,
+  bool redirectFocusToFirstEmptyField = false,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -22,6 +23,7 @@ Widget buildTestApp({
         inputFormatter: inputFormatter,
         keyboardType: TextInputType.number,
         showCursor: showCursor ?? false,
+        redirectFocusToFirstEmptyField: redirectFocusToFirstEmptyField,
         onChanged: onChanged,
         onCompleted: onCompleted,
       ),
@@ -254,6 +256,76 @@ void main() {
 
     expect(tester.widget<TextField>(fieldAt(0)).focusNode!.hasFocus, isTrue);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('fields stay left-to-right inside an RTL locale',
+      (tester) async {
+    String? completed;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Directionality(
+            textDirection: TextDirection.rtl,
+            child: OTPTextField(
+              length: 4,
+              width: 300,
+              fieldWidth: 40,
+              onCompleted: (pin) => completed = pin,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // The first field must be laid out to the LEFT of the last field,
+    // regardless of the surrounding text direction.
+    expect(tester.getTopLeft(fieldAt(0)).dx,
+        lessThan(tester.getTopLeft(fieldAt(3)).dx));
+
+    // And the pin is joined in typing order, not reversed.
+    await tester.enterText(fieldAt(0), '1');
+    await tester.enterText(fieldAt(1), '2');
+    await tester.enterText(fieldAt(2), '3');
+    await tester.enterText(fieldAt(3), '4');
+    await tester.pump();
+    expect(completed, '1234');
+  });
+
+  testWidgets('tapping a later field keeps focus there by default',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp());
+
+    await tester.enterText(fieldAt(0), '1');
+    await tester.pump();
+
+    await tester.tap(fieldAt(3));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(fieldAt(3)).focusNode!.hasFocus, isTrue);
+  });
+
+  testWidgets('redirectFocusToFirstEmptyField jumps to the first empty field',
+      (tester) async {
+    await tester.pumpWidget(buildTestApp(
+      redirectFocusToFirstEmptyField: true,
+    ));
+
+    await tester.enterText(fieldAt(0), '1');
+    await tester.enterText(fieldAt(1), '2');
+    await tester.pump();
+
+    // First empty field is index 2; tapping the last field must redirect.
+    await tester.tap(fieldAt(3));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(fieldAt(3)).focusNode!.hasFocus, isFalse);
+    expect(tester.widget<TextField>(fieldAt(2)).focusNode!.hasFocus, isTrue);
+
+    // Tapping a filled field before the first empty one does not redirect.
+    await tester.tap(fieldAt(0));
+    await tester.pump();
+    expect(tester.widget<TextField>(fieldAt(0)).focusNode!.hasFocus, isTrue);
   });
 
   testWidgets('cursor and selection visuals are hidden by default',
