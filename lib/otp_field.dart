@@ -88,10 +88,10 @@ class OTPTextField extends StatefulWidget {
   /// Whether focus should jump to the first empty field when a later field
   /// gains focus.
   ///
-  /// Defaults to false: the user can tap any box and type into it, even if
-  /// earlier boxes are still empty. When true, focusing a box beyond the
-  /// first empty one redirects focus to the first empty box, so the code
-  /// is always entered contiguously from the start.
+  /// Defaults to true: focusing a box beyond the first empty one redirects
+  /// focus to the first empty box, so the code is always entered
+  /// contiguously from the start. When false, the user can tap any box and
+  /// type into it, even if earlier boxes are still empty.
   final bool redirectFocusToFirstEmptyField;
 
   const OTPTextField({
